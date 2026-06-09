@@ -1,0 +1,29 @@
+/*
+ * LANGUAGES CONTAINER COMPONENT STYLES
+ * Clean, modern styling for the languages grid container
+ */
+
+/* ===== GRID LAYOUT ===== */
+:host {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  width: 100%;
+  transition: gap var(--transition-normal);
+}
+
+/* ===== RESPONSIVE STYLES ===== */
+/* Tablet layout (992px and below) */
+@media (max-width: 992px) {
+  :host {
+    gap: var(--space-3);
+  }
+}
+
+/* Mobile layout (576px and below) */
+@media (max-width: 576px) {
+  :host {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+}

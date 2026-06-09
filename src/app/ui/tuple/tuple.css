@@ -1,0 +1,86 @@
+/*
+ * TUPLE COMPONENT STYLES
+ * Clean, modern styling for key-value contact information
+ */
+
+/* ===== COMPONENT LAYOUT ===== */
+:host {
+  display: block;
+  margin-bottom: var(--space-4);
+}
+
+.tuple-container {
+  display: flex;
+  align-items: center;
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-normal);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-card-bg);
+  position: relative;
+  overflow: hidden;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+/* ===== TYPOGRAPHY ===== */
+/* Label/category text */
+.heading {
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-base);
+  color: var(--color-gray);
+  font-weight: var(--font-weight-medium);
+  transition: color var(--transition-fast);
+}
+
+/* Value/content text */
+.body {
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-lg);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-bold);
+  text-decoration: none;
+  transition: color var(--transition-normal), transform var(--transition-fast);
+}
+
+/* ===== INTERACTIVE STATES ===== */
+/* Clickable items */
+.clickable {
+  cursor: pointer;
+}
+
+.tuple-container.clickable:hover {
+  background: var(--color-accent-bg);
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.tuple-container:hover .body {
+  color: var(--color-accent);
+}
+
+/* Focus state for accessibility */
+.tuple-container:focus-within {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* ===== RESPONSIVE STYLES ===== */
+/* Mobile layout (576px and below) */
+@media (max-width: 576px) {
+  .tuple-container {
+    padding: var(--space-3);
+  }
+
+  .body {
+    font-size: var(--font-size-md);
+  }
+}

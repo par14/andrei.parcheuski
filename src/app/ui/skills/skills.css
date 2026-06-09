@@ -1,0 +1,29 @@
+/*
+ * SKILLS CONTAINER COMPONENT STYLES
+ * Clean, modern styling for the skills container
+ */
+
+/* ===== COMPONENT LAYOUT ===== */
+:host {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  width: 100%;
+  transition: gap var(--transition-normal);
+}
+
+/* ===== RESPONSIVE STYLES ===== */
+/* Tablet layout (992px and below) */
+@media (max-width: 992px) {
+  :host {
+    gap: var(--space-2);
+  }
+}
+
+/* Mobile layout (576px and below) */
+@media (max-width: 576px) {
+  :host {
+    gap: var(--space-2);
+    justify-content: flex-start;
+  }
+}

@@ -1,0 +1,101 @@
+<div class="container">
+  <ngp-header />
+  <div class="hero-section" role="banner">
+    <section class="hero">
+      <div class="hero-image-wrapper">
+        <div class="hero-gradient" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    @let experienceOverview = PORTFOLIO_DATA.experienceOverview;
+
+    <div class="right-column">
+      <section class="experience-section" aria-label="Professional experience">
+        <strong aria-label="Career timespan">
+          {{ experienceOverview.startYear }} - {{ currentYear() }}
+        </strong>
+        <span>{{ yearsOfExperience() }} years of experience</span>
+      </section>
+
+      <blockquote cite="personal-quote">
+        <span aria-hidden="true">"</span>
+        <span>{{ PORTFOLIO_DATA.quote.text }}</span>
+      </blockquote>
+    </div>
+
+    @let personalInfo = PORTFOLIO_DATA.personalInfo;
+    <div class="left-column">
+      <section class="name-and-role" aria-labelledby="name-heading">
+        <h1 id="name-heading" class="name">
+          {{ personalInfo.firstName }}<br />{{ personalInfo.lastName }}
+        </h1>
+        <h2 class="role">{{ personalInfo.role }}</h2>
+      </section>
+    </div>
+  </div>
+  <main id="main-content" role="main">
+    <ngp-section title="About">
+      <p>{{ PORTFOLIO_DATA.aboutInfo.description }}</p>
+    </ngp-section>
+
+    <ngp-section title="Experience">
+      @for (entry of PORTFOLIO_DATA.careerEntries; track $index) {
+        <ngp-career-entry
+          [company]="entry.company"
+          [location]="entry.location"
+          [startYear]="entry.startYear"
+          [endYear]="entry.endYear"
+          [role]="entry.role"
+          [description]="entry.description"
+          [achievements]="entry.achievements ?? []"
+        />
+      }
+    </ngp-section>
+
+    <ngp-section title="Education">
+      @for (edu of PORTFOLIO_DATA.education; track $index) {
+        <ngp-career-entry
+          [company]="edu.institution"
+          [location]="edu.location"
+          [startYear]="edu.startYear"
+          [endYear]="edu.endYear"
+          [role]="edu.degree"
+        />
+      }
+    </ngp-section>
+
+    <ngp-section title="Skills">
+      <ngp-skills>
+        @for (skill of PORTFOLIO_DATA.skills; track $index) {
+          <ngp-skill [skill]="skill.name" />
+        }
+      </ngp-skills>
+    </ngp-section>
+
+    <ngp-section title="Languages">
+      <ngp-languages>
+        @for (language of PORTFOLIO_DATA.languages; track $index) {
+          <ngp-language [language]="language" />
+        }
+      </ngp-languages>
+    </ngp-section>
+
+    <ngp-section title="Projects">
+      @for (link of PORTFOLIO_DATA.links; track $index) {
+        <ngp-link [link]="link" />
+      }
+    </ngp-section>
+
+    <ngp-section title="Contact">
+      @for (contact of PORTFOLIO_DATA.contactInfo; track $index) {
+        <ngp-tuple
+          [heading]="contact.heading"
+          [body]="contact.body"
+          [link]="contact.clickable ? contact.link! : ''"
+        />
+      }
+    </ngp-section>
+
+    <ngp-footer />
+  </main>
+</div>

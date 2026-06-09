@@ -1,0 +1,37 @@
+/*
+ * LANGUAGE COMPONENT STYLES
+ * Clean, modern styling for language proficiency display
+ */
+
+/* ===== COMPONENT LAYOUT ===== */
+.language {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  transition: all var(--transition-normal);
+  background-color: var(--color-card-bg);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+/* ===== TYPOGRAPHY ===== */
+/* Language name */
+.name {
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  transition: color var(--transition-fast);
+}
+
+/* Proficiency level */
+.level {
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-base);
+  color: var(--color-gray);
+  transition: color var(--transition-fast);
+}
