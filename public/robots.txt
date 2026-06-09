@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://portfolio-lake-nu-nptx3bo1ul.vercel.app/sitemap.xml
