@@ -127,12 +127,13 @@ header {
   .right-header-content {
     flex-wrap: wrap;
     justify-content: center;
-    max-width: 100%;
+    width: 100%;
   }
 
   .status {
     text-align: center;
     min-width: 0;
+    flex-basis: 100%;
   }
 
   .name {

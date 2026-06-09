@@ -58,6 +58,11 @@
   transition: color var(--transition-fast);
 }
 
+.achievements strong {
+  color: var(--color-accent);
+  font-weight: var(--font-weight-bold);
+}
+
 .achievements li::before {
   content: '';
   position: absolute;

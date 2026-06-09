@@ -1,4 +1,5 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {afterNextRender, ChangeDetectionStrategy, Component} from '@angular/core';
+import {inject as injectAnalytics} from '@vercel/analytics';
 
 import {Layout} from './layout/layout';
 
@@ -12,4 +13,9 @@ import {Layout} from './layout/layout';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class App {}
+export class App {
+  constructor() {
+    // Vercel Web Analytics — browser-only so it never runs during SSR/prerender.
+    afterNextRender(() => injectAnalytics());
+  }
+}

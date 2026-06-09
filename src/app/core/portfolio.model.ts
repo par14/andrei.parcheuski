@@ -3,6 +3,18 @@ export interface PersonalInfo {
   lastName: string;
   role: string;
   location: string;
+  tagline: string;
+  availability: string;
+}
+
+export interface HighlightInfo {
+  value: string;
+  label: string;
+}
+
+export interface SkillGroupInfo {
+  name: string;
+  skills: string[];
 }
 
 export interface ExperienceOverview {
@@ -29,10 +41,6 @@ export interface EducationInfo {
   location: string;
   startYear: number;
   endYear: number;
-}
-
-export interface SkillInfo {
-  name: string;
 }
 
 export interface LanguageInfo {
@@ -69,10 +77,11 @@ export interface StatusInfo {
 export interface NgPortfolio {
   personalInfo: PersonalInfo;
   experienceOverview: ExperienceOverview;
+  highlights: HighlightInfo[];
   aboutInfo: AboutInfo;
   careerEntries: CareerEntryInfo[];
   education: EducationInfo[];
-  skills: SkillInfo[];
+  skillGroups: SkillGroupInfo[];
   languages: LanguageInfo[];
   links: LinkInfo[];
   contactInfo: ContactInfo[];

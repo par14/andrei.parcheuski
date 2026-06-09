@@ -5,12 +5,13 @@ import {
   EducationInfo,
   ExperienceOverview,
   FooterInfo,
+  HighlightInfo,
   LanguageInfo,
   LinkInfo,
   NgPortfolio,
   PersonalInfo,
   Quote,
-  SkillInfo,
+  SkillGroupInfo,
   StatusInfo,
 } from './portfolio.model';
 
@@ -19,11 +20,22 @@ export const PERSONAL_INFO: PersonalInfo = {
   lastName: 'Parcheuski',
   role: 'Senior Angular Developer & Frontend Team Lead',
   location: 'Warsaw, Poland',
+  tagline:
+    'I build high-performance Angular platforms — and lead the teams that ship them.',
+  availability:
+    'Open to remote senior / lead roles · Warsaw (CET) · 6+ years working with US teams',
 };
 
 export const EXPERIENCE_OVERVIEW: ExperienceOverview = {
   startYear: 2015,
 };
+
+export const HIGHLIGHTS: HighlightInfo[] = [
+  { value: '11+', label: 'years in frontend' },
+  { value: '30+', label: 'enterprise apps shipped' },
+  { value: '8', label: 'published npm packages' },
+  { value: '95%', label: 'test coverage' },
+];
 
 export const ABOUT_INFO: AboutInfo = {
   description:
@@ -134,40 +146,27 @@ export const EDUCATION: EducationInfo[] = [
   },
 ];
 
-export const SKILLS: SkillInfo[] = [
-  { name: 'Angular' },
-  { name: 'TypeScript' },
-  { name: 'RxJS' },
-  { name: 'Signals' },
-  { name: 'NgRx' },
-  { name: 'NgRx Signal Store' },
-  { name: 'Reactive Forms' },
-  { name: 'Angular Material' },
-  { name: 'React' },
-  { name: 'Next.js' },
-  { name: 'SSR' },
-  { name: 'JavaScript' },
-  { name: 'HTML5' },
-  { name: 'CSS / SCSS' },
-  { name: 'Tailwind CSS' },
-  { name: 'Three.js' },
-  { name: 'WebGL' },
-  { name: 'Unreal Pixel Streaming' },
-  { name: '8th Wall' },
-  { name: 'WebXR / AR / VR' },
-  { name: 'Playwright' },
-  { name: 'Vitest' },
-  { name: 'Jest' },
-  { name: 'GraphQL' },
-  { name: 'REST APIs' },
-  { name: 'Monorepo' },
-  { name: 'npm packages' },
-  { name: 'CI/CD' },
-  { name: 'Docker' },
-  { name: 'AWS' },
-  { name: 'Azure' },
-  { name: 'i18n' },
-  { name: 'Performance' },
+export const SKILL_GROUPS: SkillGroupInfo[] = [
+  {
+    name: 'Core',
+    skills: ['Angular', 'TypeScript', 'RxJS', 'Signals', 'NgRx', 'NgRx Signal Store'],
+  },
+  {
+    name: 'Frontend',
+    skills: ['React', 'Next.js', 'Reactive Forms', 'Angular Material', 'Tailwind CSS', 'SCSS', 'SSR'],
+  },
+  {
+    name: '3D · AR · XR',
+    skills: ['Three.js', 'WebGL', 'Unreal Pixel Streaming', '8th Wall', 'WebXR / AR / VR'],
+  },
+  {
+    name: 'Testing & Quality',
+    skills: ['Playwright', 'Vitest', 'Jest', 'Performance', 'Frontend Architecture'],
+  },
+  {
+    name: 'APIs & Tooling',
+    skills: ['GraphQL', 'REST APIs', 'Monorepo', 'npm packages', 'CI/CD', 'Docker', 'AWS', 'Azure', 'i18n'],
+  },
 ];
 
 export const LANGUAGES: LanguageInfo[] = [
@@ -177,6 +176,24 @@ export const LANGUAGES: LanguageInfo[] = [
 ];
 
 export const LINKS: LinkInfo[] = [
+  {
+    text: '3D Product Configurators — 3D Source',
+    link: 'https://www.3dsource.com',
+    description:
+      'Architected ~30 enterprise 3D configurators on a shared 80k-line Angular + Three.js codebase, with real-time Unreal Engine pixel-streaming and 8 published @3dsource npm packages. Reached 95% test coverage with Playwright and Vitest.',
+  },
+  {
+    text: 'Vendor-Management Platform — ITRex',
+    link: 'https://itrexgroup.com',
+    description:
+      'Owned the React/Next.js frontend architecture for a sports-industry platform — schema design to Azure deployment — with i18n across 11 languages (full LTR/RTL incl. Arabic) and hybrid iOS/Android support via a WebView bridge.',
+  },
+  {
+    text: 'AR/VR Scene Builder — HQSoftware',
+    link: 'https://hqsoftwarelab.com',
+    description:
+      'Built a client web platform from scratch for authoring AR/VR (extended reality) scenes with Angular, Three.js, and Wikitude — contributing to a 50% increase in marketing-driven sales.',
+  },
   {
     text: 'Oyper — AI Browser Extension',
     link: 'https://linkedin.com/in/andrewpar14',
@@ -226,10 +243,11 @@ export const STATUS_INFO: StatusInfo = {
 export const PORTFOLIO_DATA: NgPortfolio = {
   personalInfo: PERSONAL_INFO,
   experienceOverview: EXPERIENCE_OVERVIEW,
+  highlights: HIGHLIGHTS,
   aboutInfo: ABOUT_INFO,
   careerEntries: CAREER_ENTRIES,
   education: EDUCATION,
-  skills: SKILLS,
+  skillGroups: SKILL_GROUPS,
   languages: LANGUAGES,
   links: LINKS,
   contactInfo: CONTACT_INFO,

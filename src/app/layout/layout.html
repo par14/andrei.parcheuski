@@ -26,14 +26,32 @@
     @let personalInfo = PORTFOLIO_DATA.personalInfo;
     <div class="left-column">
       <section class="name-and-role" aria-labelledby="name-heading">
+        <img
+          class="hero-portrait"
+          src="portrait.jpg"
+          alt="Andrei Parcheuski"
+          width="168"
+          height="168"
+        />
         <h1 id="name-heading" class="name">
           {{ personalInfo.firstName }}<br />{{ personalInfo.lastName }}
         </h1>
         <h2 class="role">{{ personalInfo.role }}</h2>
+        <p class="tagline">{{ personalInfo.tagline }}</p>
+        <p class="availability">{{ personalInfo.availability }}</p>
       </section>
     </div>
   </div>
   <main id="main-content" role="main">
+    <ul class="highlights" aria-label="Career highlights">
+      @for (highlight of PORTFOLIO_DATA.highlights; track $index) {
+        <li class="highlight">
+          <span class="highlight-value">{{ highlight.value }}</span>
+          <span class="highlight-label">{{ highlight.label }}</span>
+        </li>
+      }
+    </ul>
+
     <ngp-section title="About">
       <p>{{ PORTFOLIO_DATA.aboutInfo.description }}</p>
     </ngp-section>
@@ -65,11 +83,18 @@
     </ngp-section>
 
     <ngp-section title="Skills">
-      <ngp-skills>
-        @for (skill of PORTFOLIO_DATA.skills; track $index) {
-          <ngp-skill [skill]="skill.name" />
+      <div class="skill-groups">
+        @for (group of PORTFOLIO_DATA.skillGroups; track $index) {
+          <div class="skill-group">
+            <h4 class="skill-group-name">{{ group.name }}</h4>
+            <ngp-skills>
+              @for (skill of group.skills; track $index) {
+                <ngp-skill [skill]="skill" />
+              }
+            </ngp-skills>
+          </div>
         }
-      </ngp-skills>
+      </div>
     </ngp-section>
 
     <ngp-section title="Languages">
