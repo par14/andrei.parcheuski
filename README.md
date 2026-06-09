@@ -13,7 +13,6 @@ A sleek, customizable developer portfolio template built with Angular. Set up yo
 7. [Meta Tags](#meta-tags)
 8. [Deployment to Vercel](#deployment-to-vercel)
 
-
 ## Getting Started
 
 This modern portfolio template helps developers showcase their skills, experience, and projects in a professional and visually appealing way. With an interactive setup wizard and easy customization options, you can have your personal portfolio up and running in minutes.
