@@ -20,17 +20,37 @@ export class ThemeService {
   });
 
   #initTheme(): void {
+    // index.html sets data-theme before first paint (no-flash bootstrap);
+    // pick it up here so the signal and the DOM stay in sync.
+    const domTheme = this.#document.documentElement.getAttribute('data-theme') as Theme | null;
     const savedTheme = localStorage.getItem(this.#THEME_KEY) as Theme | null;
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-    const initialTheme = savedTheme || (prefersDarkMode ? 'dark' : 'light');
+    const initialTheme = savedTheme ?? domTheme ?? (prefersDarkMode ? 'dark' : 'light');
     this.theme.set(initialTheme);
     this.setTheme(initialTheme);
   }
 
   toggleTheme(): void {
-    this.theme.update((theme) => (theme === 'dark' ? 'light' : 'dark'));
-    this.setTheme(this.theme());
+    const next: Theme = this.theme() === 'dark' ? 'light' : 'dark';
+    const apply = () => {
+      this.theme.set(next);
+      this.setTheme(next);
+    };
+
+    // Progressive enhancement: cross-fade the whole page between themes.
+    const doc = this.#document as Document & {
+      startViewTransition?: (callback: () => void) => void;
+    };
+    const reducedMotion =
+      isPlatformBrowser(this.#platformId) &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (doc.startViewTransition && !reducedMotion) {
+      doc.startViewTransition(apply);
+    } else {
+      apply();
+    }
   }
 
   setTheme(theme: Theme): void {

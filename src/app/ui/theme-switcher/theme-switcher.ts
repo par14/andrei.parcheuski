@@ -1,19 +1,18 @@
-import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {ThemeService} from '../../core/theme.service';
 
 @Component({
   selector: 'ngp-theme-switcher',
-  standalone: true,
   template: `
     <button
       class="theme-toggle"
       (click)="toggleTheme()"
       [attr.aria-label]="
-        'Switch to ' + (isDarkTheme ? 'light' : 'dark') + ' theme'
+        'Switch to ' + (isDarkTheme() ? 'light' : 'dark') + ' theme'
       "
     >
       <span class="icon">
-        @if(isDarkTheme){
+        @if(isDarkTheme()){
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="20"
@@ -64,9 +63,9 @@ import {ThemeService} from '../../core/theme.service';
 export class ThemeSwitcherComponent {
   #themeService = inject(ThemeService);
 
-  get isDarkTheme(): boolean {
-    return this.#themeService.currentTheme() === 'dark';
-  }
+  protected readonly isDarkTheme = computed(
+    () => this.#themeService.currentTheme() === 'dark',
+  );
 
   toggleTheme(): void {
     this.#themeService.toggleTheme();

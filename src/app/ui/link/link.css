@@ -45,6 +45,22 @@
 }
 
 /* ===== HOVER EFFECTS ===== */
+/* External-link arrow, revealed on hover */
+.link::after {
+  content: '\2197';
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-accent);
+  opacity: 0;
+  transform: translate(-6px, 6px);
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+  pointer-events: none;
+}
+
 .link:hover {
   border-color: var(--color-accent);
   background-color: var(--color-accent-bg);
@@ -53,9 +69,13 @@
 }
 
 .link:hover::after {
-  border-color: var(--color-accent);
   opacity: 1;
-  transform: rotate(45deg) scale(1.2);
+  transform: translate(0, 0);
+}
+
+.link:focus-visible::after {
+  opacity: 1;
+  transform: translate(0, 0);
 }
 
 /* ===== ACCESSIBILITY ===== */

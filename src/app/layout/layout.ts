@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, computed, signal} from '@angular/core';
+import {afterNextRender, ChangeDetectionStrategy, Component, computed, signal} from '@angular/core';
 
 import {CareerEntry} from '../ui/career-entry/career-entry';
 import {PORTFOLIO_DATA} from '../core/portfolio.data';
@@ -9,6 +9,7 @@ import {SkillComponent} from '../ui/skills/skill';
 import {Language} from '../ui/language/language';
 import {Section} from '../ui/section/section';
 import {LinkComponent} from '../ui/link/link';
+import {CountUp} from '../ui/count-up/count-up';
 
 import {HeaderComponent} from './header/header.component';
 import {Footer} from './footer/footer';
@@ -28,14 +29,21 @@ import {Footer} from './footer/footer';
     Footer,
     Languages,
     Language,
+    CountUp,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Layout {
   PORTFOLIO_DATA = PORTFOLIO_DATA;
 
+  // Baked in at prerender time; refreshed after hydration so the
+  // experience counter never shows a stale year from an old build.
   currentYear = signal(new Date().getFullYear());
   yearsOfExperience = computed(() =>
     this.currentYear() - PORTFOLIO_DATA.experienceOverview.startYear
-  )
+  );
+
+  constructor() {
+    afterNextRender(() => this.currentYear.set(new Date().getFullYear()));
+  }
 }

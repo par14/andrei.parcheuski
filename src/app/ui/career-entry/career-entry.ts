@@ -14,10 +14,10 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
         {{ description() }}
       </span>
     }
-    @if (achievements().length) {
+    @if (emphasized().length) {
       <ul class="achievements">
-        @for (achievement of achievements(); track $index) {
-          <li [innerHTML]="emphasize(achievement)"></li>
+        @for (achievement of emphasized(); track $index) {
+          <li [innerHTML]="achievement"></li>
         }
       </ul>
     }
@@ -39,8 +39,13 @@ export class CareerEntry {
     return `${this.startYear()} - ${end ?? 'Present'}`;
   });
 
+  /** Achievements with numbers highlighted — computed once, not on every CD cycle. */
+  protected readonly emphasized = computed(() =>
+    this.achievements().map((achievement) => this.#emphasize(achievement)),
+  );
+
   /** Escapes the text, then wraps standalone numbers/percentages in <strong> for skimmability. */
-  protected emphasize(text: string): string {
+  #emphasize(text: string): string {
     const escaped = text
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')

@@ -292,7 +292,7 @@ a:hover {
 
 /* ===== LAYOUT UTILITIES ===== */
 .container {
-  max-width: 1280px;
+  max-width: 1440px;
   margin-left: auto;
   margin-right: auto;
   padding: 0 var(--space-5);
@@ -351,8 +351,4 @@ a:hover {
 :focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
-}
-
-html[data-theme='light'] .hero-image {
-  opacity: 0.9;
 }

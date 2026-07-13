@@ -2,10 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Andrei Parcheuski — Senior Angular Developer &amp; Frontend Team Lead</title>
+    <title>Andrei Parcheuski — Senior Angular Developer · 3D / WebGL</title>
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Andrei Parcheuski — Senior Angular Developer and Frontend Team Lead with 11+ years building production-grade web apps across healthcare, e-commerce, LMS, and AR/XR. Angular, NgRx, RxJS, Signals, React, Next.js, Three.js." />
+    <meta name="description" content="Andrei Parcheuski — Senior Angular Developer with 11+ years building production-grade web apps and 3D product configurators. Angular, NgRx, RxJS, Signals, Three.js, WebGL, React, Next.js." />
     <meta name="keywords" content="Andrei Parcheuski, Senior Angular Developer, Frontend Team Lead, Angular, NgRx, RxJS, Signals, React, Next.js, Three.js, WebGL, frontend architecture, Warsaw" />
     <meta name="author" content="Andrei Parcheuski" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
@@ -18,17 +18,17 @@
     <meta property="profile:first_name" content="Andrei" />
     <meta property="profile:last_name" content="Parcheuski" />
     <meta property="og:url" content="https://andreiparcheuski.com/" />
-    <meta property="og:title" content="Andrei Parcheuski — Senior Angular Developer & Frontend Team Lead" />
+    <meta property="og:title" content="Andrei Parcheuski — Senior Angular Developer · 3D / WebGL" />
     <meta property="og:description" content="11+ years building production-grade web apps. Angular ecosystem specialist (Signals, NgRx, RxJS), with React, Next.js, and 3D/AR experience." />
     <meta property="og:image" content="https://andreiparcheuski.com/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Andrei Parcheuski — Senior Angular Developer & Frontend Team Lead" />
+    <meta property="og:image:alt" content="Andrei Parcheuski — Senior Angular Developer · 3D / WebGL" />
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content="https://andreiparcheuski.com/" />
-    <meta property="twitter:title" content="Andrei Parcheuski — Senior Angular Developer & Frontend Team Lead" />
+    <meta property="twitter:title" content="Andrei Parcheuski — Senior Angular Developer · 3D / WebGL" />
     <meta property="twitter:description" content="11+ years building production-grade web apps. Angular ecosystem specialist (Signals, NgRx, RxJS), with React, Next.js, and 3D/AR experience." />
     <meta property="twitter:image" content="https://andreiparcheuski.com/og-image.png" />
 
@@ -39,7 +39,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Space+Grotesk:wght@300..700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&family=Space+Grotesk:wght@300..700&display=swap"
       rel="stylesheet"
     />
 
@@ -51,7 +51,7 @@
         "name": "Andrei Parcheuski",
         "url": "https://andreiparcheuski.com/",
         "image": "https://andreiparcheuski.com/portrait.jpg",
-        "jobTitle": "Senior Angular Developer & Frontend Team Lead",
+        "jobTitle": "Senior Angular Developer",
         "email": "mailto:parchevscky17@gmail.com",
         "telephone": "+48572017314",
         "address": {
@@ -83,6 +83,18 @@
           "name": "3D Source"
         }
       }
+    </script>
+    <script>
+      // Set the theme before first paint to avoid a light/dark flash.
+      (function () {
+        try {
+          var t = localStorage.getItem('portfolio-theme');
+          if (t !== 'light' && t !== 'dark') {
+            t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          }
+          document.documentElement.setAttribute('data-theme', t);
+        } catch (e) { /* SSR-safe no-op */ }
+      })();
     </script>
   </head>
   <body>

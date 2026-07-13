@@ -1,6 +1,8 @@
+<a class="skip-link" href="#main-content">Skip to content</a>
+<div class="scroll-progress" aria-hidden="true"></div>
 <div class="container">
   <ngp-header />
-  <div class="hero-section" role="banner">
+  <div class="hero-section">
     <section class="hero">
       <div class="hero-image-wrapper">
         <div class="hero-gradient" aria-hidden="true"></div>
@@ -17,7 +19,7 @@
         <span>{{ yearsOfExperience() }} years of experience</span>
       </section>
 
-      <blockquote cite="personal-quote">
+      <blockquote>
         <span aria-hidden="true">"</span>
         <span>{{ PORTFOLIO_DATA.quote.text }}</span>
       </blockquote>
@@ -29,6 +31,7 @@
         <img
           class="hero-portrait"
           src="portrait.jpg"
+          fetchpriority="high"
           alt="Andrei Parcheuski"
           width="168"
           height="168"
@@ -46,7 +49,7 @@
     <ul class="highlights" aria-label="Career highlights">
       @for (highlight of PORTFOLIO_DATA.highlights; track $index) {
         <li class="highlight">
-          <span class="highlight-value">{{ highlight.value }}</span>
+          <span class="highlight-value" ngpCountUp>{{ highlight.value }}</span>
           <span class="highlight-label">{{ highlight.label }}</span>
         </li>
       }

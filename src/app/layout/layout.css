@@ -3,36 +3,59 @@
  * A clean, modern CSS structure for the portfolio layout
  */
 
-/* ===== CSS CUSTOM PROPERTIES ===== */
-:root {
-  /* These are fallbacks - main variables are defined in styles.css */
-  --transition-fast: 0.2s ease;
-  --transition-normal: 0.3s ease;
-  --transition-slow: 0.5s ease;
-}
-
-/* ===== BASE STYLES ===== */
-body {
-  margin: 0;
-  font-family: var(--font-family-body);
+/* ===== SKIP LINK (visible on keyboard focus only) ===== */
+.skip-link {
+  position: fixed;
+  top: var(--space-2);
+  left: var(--space-2);
+  z-index: 200;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
   background: var(--color-background);
+  border: 1px solid var(--color-accent);
+  color: var(--color-accent);
+  font-weight: var(--font-weight-semibold);
+  transform: translateY(-200%);
 }
 
-/* ===== LAYOUT STRUCTURE ===== */
-.container {
-  width: 100%;
-  max-width: 1440px;
-  margin: 0 auto;
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+/* ===== SCROLL PROGRESS (accent hairline, zero JS) ===== */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 100;
+  background: linear-gradient(90deg, var(--color-accent), var(--color-secondary));
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  pointer-events: none;
+}
+
+@supports (animation-timeline: scroll()) {
+  .scroll-progress {
+    animation: growProgress linear both;
+    animation-timeline: scroll(root);
+  }
+}
+
+@keyframes growProgress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
 }
 
 .hero-section {
   height: 100vh;
+  height: 100dvh;
   display: grid;
   grid-template-columns: 70% 30%;
   gap: var(--space-5);
   margin-bottom: var(--space-10);
   position: relative;
-  view-timeline-name: --scroll-section;
 }
 
 .left-column {
@@ -70,12 +93,15 @@ main {
   overflow: hidden;
   z-index: -1;
   background: var(--color-background);
+}
 
-  /* Scroll-linked animation - only for desktop */
-  animation: slideOut linear;
-  animation-timeline: scroll(block nearest);
-  animation-range: 0 60vh;
-  animation-fill-mode: both;
+/* Scroll-linked hero slide — only in browsers with scroll-driven animations */
+@supports (animation-timeline: scroll()) {
+  .hero {
+    animation: slideOut linear both;
+    animation-timeline: scroll(block nearest);
+    animation-range: 0 60vh;
+  }
 }
 
 .hero-image-wrapper {
@@ -86,23 +112,34 @@ main {
   position: relative;
 }
 
-/* Text-only gradient hero backdrop (behind the portrait) */
+/* Text-only gradient hero backdrop (behind the portrait).
+   The aurora lives on an oversized ::before layer and drifts via
+   transform — compositor-only, no full-screen repaints. */
 .hero-gradient {
+  position: relative;
   width: 100%;
   height: 100%;
+  background: var(--color-background);
+  overflow: hidden;
+}
+
+.hero-gradient::before {
+  content: '';
+  position: absolute;
+  inset: -25%;
   background:
-    radial-gradient(60% 60% at 18% 22%, var(--color-accent-bg, rgba(100, 255, 218, 0.16)) 0%, transparent 60%),
-    radial-gradient(55% 55% at 82% 72%, rgba(127, 219, 255, 0.14) 0%, transparent 60%),
-    radial-gradient(45% 45% at 60% 10%, rgba(100, 255, 218, 0.08) 0%, transparent 55%),
-    var(--color-background);
-  background-size: 200% 200%, 200% 200%, 200% 200%, auto;
+    radial-gradient(38% 38% at 25% 30%, var(--color-accent-bg, rgba(100, 255, 218, 0.16)) 0%, transparent 60%),
+    radial-gradient(34% 34% at 72% 68%, rgba(127, 219, 255, 0.14) 0%, transparent 60%),
+    radial-gradient(28% 28% at 58% 18%, rgba(100, 255, 218, 0.08) 0%, transparent 55%);
   animation: auroraDrift 18s ease-in-out infinite alternate;
+  will-change: transform;
 }
 
 .hero-gradient::after {
   content: '';
   position: absolute;
   inset: 0;
+  z-index: 1;
   background-image:
     linear-gradient(var(--color-accent-bg, rgba(100, 255, 218, 0.06)) 1px, transparent 1px),
     linear-gradient(90deg, var(--color-accent-bg, rgba(100, 255, 218, 0.06)) 1px, transparent 1px);
@@ -113,8 +150,8 @@ main {
 }
 
 @keyframes auroraDrift {
-  0% { background-position: 0% 0%, 100% 100%, 50% 0%, 0 0; }
-  100% { background-position: 30% 40%, 70% 60%, 40% 30%, 0 0; }
+  from { transform: translate3d(-4%, -3%, 0) scale(1); }
+  to { transform: translate3d(4%, 5%, 0) scale(1.12); }
 }
 
 /* Hero portrait (circular headshot) */
@@ -127,7 +164,6 @@ main {
   border: 3px solid var(--color-accent);
   box-shadow: 0 0 0 6px var(--color-accent-bg), 0 12px 30px rgba(0, 0, 0, 0.35);
   margin-bottom: var(--space-5);
-  animation: fadeInUp 1s var(--easing-decelerate) both;
 }
 
 /* ===== TYPOGRAPHY ===== */
@@ -135,9 +171,19 @@ main {
   width: fit-content;
   position: relative;
   z-index: 1;
-  animation: fadeInUp 1s ease-out forwards;
   padding-bottom: var(--space-10);
 }
+
+/* Orchestrated entrance: each hero element arrives in sequence */
+.name-and-role > * {
+  animation: fadeInUp 0.7s var(--easing-decelerate) backwards;
+}
+
+.name-and-role > :nth-child(1) { animation-delay: 0.05s; }
+.name-and-role > :nth-child(2) { animation-delay: 0.18s; }
+.name-and-role > :nth-child(3) { animation-delay: 0.3s; }
+.name-and-role > :nth-child(4) { animation-delay: 0.42s; }
+.name-and-role > :nth-child(5) { animation-delay: 0.54s; }
 
 .name {
   font-family: var(--font-family-heading);
@@ -185,13 +231,18 @@ blockquote {
   margin: var(--space-4) 0 0 0;
   padding: var(--space-6) var(--space-5);
   border-left: 4px solid var(--color-accent);
-
-  /* Scroll-linked animation */
-  animation: elementSlideOut linear;
-  animation-timeline: scroll(block nearest);
-  animation-range: 0 40vh;
-  animation-fill-mode: both;
+  animation: fadeInUp 0.7s 0.75s var(--easing-decelerate) backwards;
   transform-origin: right center;
+}
+
+@supports (animation-timeline: scroll()) {
+  blockquote {
+    animation:
+      elementSlideOut linear both,
+      fadeInUp 0.7s 0.75s var(--easing-decelerate) backwards;
+    animation-timeline: scroll(block nearest), auto;
+    animation-range: 0 40vh, normal;
+  }
 }
 
 blockquote span {
@@ -211,13 +262,18 @@ blockquote span {
   font-family: var(--font-family-body);
   margin-bottom: var(--space-4);
   align-self: flex-start;
-
-  /* Scroll-linked animation */
-  animation: elementSlideOut linear;
-  animation-timeline: scroll(block nearest);
-  animation-range: 0 60vh;
-  animation-fill-mode: both;
+  animation: fadeInUp 0.7s 0.65s var(--easing-decelerate) backwards;
   transform-origin: right center;
+}
+
+@supports (animation-timeline: scroll()) {
+  .experience-section {
+    animation:
+      elementSlideOut linear both,
+      fadeInUp 0.7s 0.65s var(--easing-decelerate) backwards;
+    animation-timeline: scroll(block nearest), auto;
+    animation-range: 0 60vh, normal;
+  }
 }
 
 .experience-section strong {
@@ -273,10 +329,15 @@ blockquote span {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.02);
-  opacity: 0;
-  animation: fadeInUp 0.8s var(--easing-decelerate) both;
-  animation-timeline: view();
-  animation-range: entry 0% entry 60%;
+  animation: fadeInUp 0.8s var(--easing-decelerate) backwards;
+}
+
+@supports (animation-timeline: view()) {
+  .highlights {
+    animation: fadeInUp 0.8s var(--easing-decelerate) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 60%;
+  }
 }
 
 .highlight {
@@ -325,12 +386,17 @@ ngp-section,
 ngp-footer {
   grid-column: 1;
   margin-bottom: var(--space-8);
-  opacity: 0;
-  /* Reveal each section as it scrolls into view (falls back to a one-time
-     load animation in browsers without scroll-driven animation support). */
-  animation: fadeInUp 0.8s var(--easing-decelerate) both;
-  animation-timeline: view();
-  animation-range: entry 0% entry 55%;
+}
+
+/* Reveal each section as it scrolls into view; browsers without
+   scroll-driven animation support simply render sections visible. */
+@supports (animation-timeline: view()) {
+  ngp-section,
+  ngp-footer {
+    animation: fadeInUp 0.8s var(--easing-decelerate) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 55%;
+  }
 }
 
 /* Enhanced section styling */
@@ -376,13 +442,30 @@ ngp-skill {
 
 ngp-career-entry {
   position: relative;
-  transition: transform var(--transition-normal);
   display: block;
-  margin-bottom: var(--space-3);
+  margin-bottom: var(--space-4);
+  padding-left: var(--space-5);
+  border-left: 1px solid var(--color-border);
 }
 
-ngp-career-entry:hover {
-  transform: translateX(6px);
+/* Timeline dot on the rail */
+ngp-career-entry::before {
+  content: '';
+  position: absolute;
+  left: -5.5px;
+  top: 7px;
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+  background: var(--color-background);
+  border: 2px solid var(--color-accent);
+  box-shadow: 0 0 10px var(--color-accent-bg);
+  transition: background var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+ngp-career-entry:hover::before {
+  background: var(--color-accent);
+  box-shadow: 0 0 14px var(--color-accent-muted);
 }
 
 ngp-language {
@@ -449,10 +532,6 @@ html[data-theme='light'] ngp-section:hover {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
-html[data-theme='light'] .hero-section::after {
-  box-shadow: 0 0 10px rgba(70, 110, 180, 0.3);
-}
-
 html[data-theme='light'] ngp-section::before {
   box-shadow: 0 0 12px rgba(70, 110, 180, 0.2);
   background: linear-gradient(to bottom, transparent 0%, var(--color-accent) 10%, var(--color-secondary) 100%);
@@ -471,10 +550,6 @@ html[data-theme='light'] ngp-section::before {
     gap: var(--space-6);
   }
 
-  .hero-section::after {
-    width: 30%;
-  }
-
   blockquote {
     display: none;
   }
@@ -486,6 +561,7 @@ html[data-theme='light'] ngp-section::before {
   .hero-section {
     grid-template-columns: 1fr;
     min-height: 100vh;
+    min-height: 100dvh;
     height: auto;
     margin-bottom: var(--space-8);
     position: relative;

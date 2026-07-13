@@ -41,3 +41,8 @@ testem.log
 .DS_Store
 Thumbs.db
 .vercel
+
+# Internal AI-agent docs — never commit to the public portfolio repo
+.claude/
+AGENTS.md
+CLAUDE.md
