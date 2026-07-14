@@ -33,6 +33,7 @@ export class CountUp {
     const target = parseInt(digits, 10);
     const duration = 1200;
 
+    let frameId = 0;
     const observer = new IntersectionObserver(
       (entries) => {
         if (!entries.some((entry) => entry.isIntersecting)) return;
@@ -43,16 +44,19 @@ export class CountUp {
           const progress = Math.min((now - start) / duration, 1);
           const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
           host.textContent = `${prefix}${Math.round(eased * target)}${suffix}`;
-          if (progress < 1) requestAnimationFrame(tick);
+          if (progress < 1) frameId = requestAnimationFrame(tick);
         };
 
         host.textContent = `${prefix}0${suffix}`;
-        requestAnimationFrame(tick);
+        frameId = requestAnimationFrame(tick);
       },
       { threshold: 0.6 },
     );
 
     observer.observe(host);
-    this.#destroyRef.onDestroy(() => observer.disconnect());
+    this.#destroyRef.onDestroy(() => {
+      observer.disconnect();
+      cancelAnimationFrame(frameId);
+    });
   }
 }

@@ -45,6 +45,7 @@ describe('ThemeService', () => {
 
     expect(doc.documentElement.getAttribute('data-theme')).toBe('light');
     expect(localStorage.getItem('portfolio-theme')).toBe('light');
+    expect(service.currentTheme()).toBe('light');
   });
 
   it('toggles between dark and light', () => {

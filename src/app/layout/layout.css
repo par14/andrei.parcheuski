@@ -129,8 +129,8 @@ main {
   inset: -25%;
   background:
     radial-gradient(38% 38% at 25% 30%, var(--color-accent-bg, rgba(100, 255, 218, 0.16)) 0%, transparent 60%),
-    radial-gradient(34% 34% at 72% 68%, rgba(127, 219, 255, 0.14) 0%, transparent 60%),
-    radial-gradient(28% 28% at 58% 18%, rgba(100, 255, 218, 0.08) 0%, transparent 55%);
+    radial-gradient(34% 34% at 72% 68%, color-mix(in srgb, var(--color-secondary) 14%, transparent) 0%, transparent 60%),
+    radial-gradient(28% 28% at 58% 18%, color-mix(in srgb, var(--color-accent) 8%, transparent) 0%, transparent 55%);
   animation: auroraDrift 18s ease-in-out infinite alternate;
   will-change: transform;
 }

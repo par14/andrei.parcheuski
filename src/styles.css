@@ -221,8 +221,11 @@ html {
   *,
   *::before,
   *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
+    /* `animation: none` rather than a 0ms duration: scroll()/view() timeline
+       animations ignore animation-duration, so a duration override would
+       leave the scroll-driven effects running. Base styles keep all content
+       visible without the entrance/scroll motion. */
+    animation: none !important;
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
