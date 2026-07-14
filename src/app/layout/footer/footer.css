@@ -17,7 +17,8 @@
 .footer-main-message {
   /* Typography */
   display: block;
-  font-size: var(--font-size-7xl);
+  /* Fluid: wraps instead of clipping in narrow columns */
+  font-size: clamp(2.5rem, 9vw, var(--font-size-7xl));
   font-family: var(--font-family-heading);
   font-weight: var(--font-weight-bold);
   text-transform: uppercase;
@@ -44,7 +45,7 @@
   /* Typography */
   display: block;
   margin-top: var(--space-4);
-  font-size: var(--font-size-3xl);
+  font-size: clamp(1.25rem, 4vw, var(--font-size-3xl));
   font-family: var(--font-family-body);
   text-transform: uppercase;
   font-weight: var(--font-weight-bold);
@@ -81,14 +82,11 @@
   }
 
   .footer-main-message {
-    font-size: var(--font-size-4xl);
     line-height: 1.1;
     text-align: left;
   }
 
   .footer-sub-message {
-    font-size: var(--font-size-xl);
     text-align: left;
-    margin-top: var(--space-4);
   }
 }

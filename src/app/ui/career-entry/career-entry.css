@@ -7,7 +7,6 @@
 :host {
   display: block;
   position: relative;
-  transition: transform var(--transition-normal);
 }
 
 /* ===== TYPOGRAPHY ===== */

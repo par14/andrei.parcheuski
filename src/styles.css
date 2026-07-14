@@ -3,6 +3,29 @@
  * A comprehensive design system for the portfolio application
  */
 
+/* ===== SELF-HOSTED FONTS (latin subset, variable weight) ===== */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/inter-var-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('/fonts/space-grotesk-var-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 /* ===== DESIGN TOKENS ===== */
 :root {
   /* ===== TYPOGRAPHY ===== */
@@ -10,23 +33,19 @@
   --font-family-body: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   --font-family-heading: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 
-  /* Layout constants */
-  --header-height: 60px;
-  --card-bg: rgba(255, 255, 255, 0.03);
-
   /* Font sizes - Desktop */
-  --font-size-xs: 12px;
-  --font-size-sm: 14px;
-  --font-size-base: 16px;
-  --font-size-md: 18px;
-  --font-size-lg: 24px;
-  --font-size-xl: 32px;
-  --font-size-2xl: 36px;
-  --font-size-3xl: 48px;
-  --font-size-4xl: 64px;
-  --font-size-5xl: 96px;
-  --font-size-6xl: 128px;
-  --font-size-7xl: 140px;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-md: 1.125rem;
+  --font-size-lg: 1.5rem;
+  --font-size-xl: 2rem;
+  --font-size-2xl: 2.25rem;
+  --font-size-3xl: 3rem;
+  --font-size-4xl: 4rem;
+  --font-size-5xl: 6rem;
+  --font-size-6xl: 8rem;
+  --font-size-7xl: 8.75rem;
 
   /* Font weights */
   --font-weight-light: 300;
@@ -43,7 +62,6 @@
 
   /* Letter spacing */
   --letter-spacing-tight: -0.5px;
-  --letter-spacing-normal: 0;
   --letter-spacing-wide: 0.5px;
 
   /* ===== COLOR SYSTEM ===== */
@@ -67,10 +85,11 @@
   --light-color-text-primary: #121212;
   --light-color-text-secondary: rgba(18, 18, 18, 0.7);
   --light-color-accent: rgb(70, 110, 180);
-  --light-color-accent-muted: rgba(70, 110, 180, 0.7);
+  --light-color-accent-muted: rgba(70, 110, 180, 0.9);
   --light-color-accent-bg: rgba(70, 110, 180, 0.05);
   --light-color-border: rgba(18, 18, 18, 0.2);
-  --light-color-secondary: #90b0e0;
+  /* 5.2:1 on the light background — #90b0e0 was 2.1:1 and illegible */
+  --light-color-secondary: #4a6b9d;
   --light-color-gray: #6e6e6e;
   --light-color-card-bg: rgba(255, 255, 255, 0.7);
   --light-color-shadow: rgba(0, 0, 0, 0.1);
@@ -108,25 +127,13 @@
   --radius-full: 9999px;
 
   /* ===== SHADOWS ===== */
-  --shadow-xs: 0 1px 3px var(--color-shadow);
-  --shadow-sm: 0 1px 2px var(--color-shadow);
   --shadow-md: 0 4px 6px var(--color-shadow);
-  --shadow-lg: 0 10px 15px var(--color-shadow);
-  --shadow-inner: inset 0 2px 4px var(--color-shadow);
 
   /* ===== ANIMATIONS ===== */
   --transition-fast: 0.2s ease;
   --transition-normal: 0.3s ease;
-  --transition-slow: 0.5s ease;
   --easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
-  --easing-accelerate: cubic-bezier(0.4, 0, 1, 1);
   --easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
-
-  /* ===== BREAKPOINTS ===== */
-  --breakpoint-sm: 576px;
-  --breakpoint-md: 768px;
-  --breakpoint-lg: 992px;
-  --breakpoint-xl: 1200px;
 }
 
 /* ===== RESPONSIVE ADJUSTMENTS ===== */
@@ -134,14 +141,14 @@
 @media (max-width: 992px) {
   :root {
     /* Font size adjustments */
-    --font-size-lg: 20px;
-    --font-size-xl: 28px;
-    --font-size-2xl: 32px;
-    --font-size-3xl: 40px;
-    --font-size-4xl: 52px;
-    --font-size-5xl: 72px;
-    --font-size-6xl: 96px;
-    --font-size-7xl: 110px;
+    --font-size-lg: 1.25rem;
+    --font-size-xl: 1.75rem;
+    --font-size-2xl: 2rem;
+    --font-size-3xl: 2.5rem;
+    --font-size-4xl: 3.25rem;
+    --font-size-5xl: 4.5rem;
+    --font-size-6xl: 6rem;
+    --font-size-7xl: 6.875rem;
 
     /* Spacing adjustments */
     --space-8: 40px;
@@ -155,14 +162,14 @@
 @media (max-width: 576px) {
   :root {
     /* Font size adjustments */
-    --font-size-lg: 18px;
-    --font-size-xl: 24px;
-    --font-size-2xl: 28px;
-    --font-size-3xl: 32px;
-    --font-size-4xl: 40px;
-    --font-size-5xl: 48px;
-    --font-size-6xl: 56px;
-    --font-size-7xl: 64px;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.5rem;
+    --font-size-2xl: 1.75rem;
+    --font-size-3xl: 2rem;
+    --font-size-4xl: 2.5rem;
+    --font-size-5xl: 3rem;
+    --font-size-6xl: 3.5rem;
+    --font-size-7xl: 4rem;
 
     /* Spacing adjustments */
     --space-6: 24px;
@@ -228,6 +235,17 @@ html {
     animation: none !important;
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* Gradient-clipped text (name, section titles, stats, footer) relies on a
+   transparent text fill; forced-colors mode strips the background gradient,
+   which would leave invisible text without this guard. */
+@media (forced-colors: active) {
+  * {
+    -webkit-text-fill-color: currentColor !important;
+    background-image: none !important;
+    text-shadow: none !important;
   }
 }
 
@@ -303,18 +321,7 @@ a:hover {
   box-sizing: border-box;
 }
 
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
-}
-
+.visually-hidden,
 .sr-only {
   position: absolute;
   width: 1px;
@@ -332,21 +339,45 @@ a:hover {
   .container {
     padding: 0 var(--space-4);
   }
-
-  .hide-mobile {
-    display: none !important;
-  }
 }
 
-@media (min-width: 577px) and (max-width: 992px) {
-  .hide-tablet {
+/* ===== PRINT ===== */
+@media print {
+  * {
+    animation: none !important;
+    transition: none !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    /* Gradient-clipped text prints as blank without an opaque fill */
+    -webkit-text-fill-color: currentColor !important;
+    background-image: none !important;
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+    overflow: visible;
+  }
+
+  .scroll-progress,
+  .hero,
+  .hero-gradient,
+  .skip-link,
+  ngp-theme-switcher {
     display: none !important;
   }
-}
 
-@media (min-width: 993px) {
-  .hide-desktop {
-    display: none !important;
+  .hero-section,
+  main {
+    display: block !important;
+    height: auto !important;
+    min-height: 0 !important;
+  }
+
+  a[href^='http']::after {
+    content: ' (' attr(href) ')';
+    font-size: 0.75rem;
+    font-weight: normal;
   }
 }
 

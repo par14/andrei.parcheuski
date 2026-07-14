@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
 @Component({
   selector: 'ngp-section',
@@ -9,8 +9,17 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
     </div>
   `,
   styleUrl: 'section.css',
+  host: { '[attr.id]': 'anchorId()' },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Section {
   title = input.required<string>();
+
+  /** Slugified title so every section is deep-linkable (e.g. #contact). */
+  anchorId = computed(() =>
+    this.title()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, ''),
+  );
 }
