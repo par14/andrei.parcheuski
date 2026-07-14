@@ -5,8 +5,8 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
   template: `
     <h4 class="role">{{ role() }}</h4>
     <div class="heading">
-      <span>{{ company() }} ● </span>
-      <span>{{ location() }} ●</span>
+      <span>{{ company() }}</span>
+      <span>{{ location() }}</span>
       <span>{{ timespan() }}</span>
     </div>
     @if (description()) {

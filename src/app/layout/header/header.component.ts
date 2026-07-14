@@ -6,13 +6,14 @@ import { CONTACT_INFO, PORTFOLIO_DATA } from '../../core/portfolio.data';
   selector: 'ngp-header',
   template: `
     <header>
-      <div class="left-header-content">
-        <a class="brand" href="/" aria-label="Andrei Parcheuski — home">
-          <img src="favicon.svg" alt="" class="brand-mark" width="36" height="36" />
-        </a>
-        <div class="pulse-circle" aria-hidden="true"></div>
-        <span class="status">{{ PORTFOLIO_DATA.statusInfo.text }}</span>
-      </div>
+      <a class="brand" href="/" aria-label="Andrei Parcheuski — home">
+        <img src="favicon.svg" alt="" class="brand-mark" width="36" height="36" />
+      </a>
+
+      <span class="status">
+        <span class="pulse-circle" aria-hidden="true"></span>
+        {{ PORTFOLIO_DATA.statusInfo.text }}
+      </span>
 
       <div class="right-header-content">
         <ngp-theme-switcher></ngp-theme-switcher>

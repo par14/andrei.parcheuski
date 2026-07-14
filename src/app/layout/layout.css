@@ -557,19 +557,20 @@ html[data-theme='light'] ngp-section::before {
 
 /* Mobile (576px and below) */
 @media (max-width: 576px) {
-  /* Hero: natural flow with the gradient as a true background */
+  /* Hero: natural flow with the gradient as a true background.
+     No forced viewport height — a compact hero avoids large empty
+     gaps above and below the intro on small screens. */
   .hero-section {
     grid-template-columns: 1fr;
-    min-height: 100vh;
-    min-height: 100dvh;
+    min-height: 0;
     height: auto;
     margin-bottom: var(--space-8);
     position: relative;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     gap: var(--space-6);
-    padding: var(--space-10) 0 var(--space-8);
+    padding: var(--space-8) 0 var(--space-6);
   }
 
   .hero {

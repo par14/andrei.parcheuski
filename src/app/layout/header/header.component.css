@@ -18,7 +18,10 @@ header {
   transition: padding var(--transition-normal);
 }
 
-.left-header-content,
+header {
+  gap: var(--space-3);
+}
+
 .right-header-content {
   display: flex;
   align-items: center;
@@ -58,6 +61,10 @@ header {
 }
 
 .status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-right: auto;
   font-family: var(--font-family-body);
   font-size: var(--font-size-base);
   color: var(--color-accent);
@@ -116,24 +123,23 @@ header {
 
 /* Mobile layout (576px and below) */
 @media (max-width: 576px) {
+  /* Two rows: brand + nav actions, then the status badge centered below. */
   header {
     padding-top: var(--space-3);
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-3);
-  }
-
-  .left-header-content,
-  .right-header-content {
     flex-wrap: wrap;
-    justify-content: center;
-    width: 100%;
+    justify-content: space-between;
   }
 
   .status {
-    text-align: center;
-    min-width: 0;
+    order: 3;
     flex-basis: 100%;
+    justify-content: center;
+    margin-right: 0;
+    font-size: var(--font-size-sm);
+  }
+
+  .right-header-content {
+    gap: var(--space-2);
   }
 
   .name {

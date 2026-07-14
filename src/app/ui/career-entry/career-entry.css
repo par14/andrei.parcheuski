@@ -14,8 +14,10 @@
 /* Company and location information */
 .heading {
   display: flex;
-  gap: var(--space-2);
-  align-items: center;
+  flex-wrap: wrap;
+  column-gap: var(--space-2);
+  row-gap: var(--space-1);
+  align-items: baseline;
   color: var(--color-gray);
   font-family: var(--font-family-body);
   font-weight: var(--font-weight-bold);
@@ -23,6 +25,13 @@
   margin-top: var(--space-2);
   margin-bottom: var(--space-2);
   transition: color var(--transition-fast);
+}
+
+/* Separator dots live in CSS so they wrap cleanly with the text. */
+.heading span:not(:last-child)::after {
+  content: '·';
+  margin-left: var(--space-2);
+  opacity: 0.6;
 }
 
 /* Job role title */

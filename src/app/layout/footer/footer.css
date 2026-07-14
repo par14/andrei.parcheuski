@@ -16,6 +16,7 @@
 /* Main message styling */
 .footer-main-message {
   /* Typography */
+  display: block;
   font-size: var(--font-size-7xl);
   font-family: var(--font-family-heading);
   font-weight: var(--font-weight-bold);
@@ -41,6 +42,8 @@
 /* Sub message styling */
 .footer-sub-message {
   /* Typography */
+  display: block;
+  margin-top: var(--space-4);
   font-size: var(--font-size-3xl);
   font-family: var(--font-family-body);
   text-transform: uppercase;
