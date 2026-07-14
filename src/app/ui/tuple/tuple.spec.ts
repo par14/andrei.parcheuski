@@ -31,6 +31,20 @@ describe('ContactComponent (tuple)', () => {
     const el = create({ heading: 'Location', body: 'Warsaw, Poland' });
 
     expect(el.querySelector('a')).toBeNull();
-    expect(el.querySelector('span.body')?.textContent).toContain('Warsaw, Poland');
+    expect(el.querySelector('span.body')?.textContent).toContain(
+      'Warsaw, Poland',
+    );
+  });
+
+  it('keeps email links in the current browsing context', () => {
+    const el = create({
+      heading: 'Email',
+      body: 'hello@example.com',
+      link: 'mailto:hello@example.com',
+    });
+
+    const a = el.querySelector('a.body') as HTMLAnchorElement;
+    expect(a.hasAttribute('target')).toBe(false);
+    expect(a.getAttribute('aria-label')).toBe('Email: hello@example.com');
   });
 });

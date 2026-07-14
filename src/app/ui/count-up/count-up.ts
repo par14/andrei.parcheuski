@@ -1,4 +1,10 @@
-import { afterNextRender, DestroyRef, Directive, ElementRef, inject } from '@angular/core';
+import {
+  afterNextRender,
+  DestroyRef,
+  Directive,
+  ElementRef,
+  inject,
+} from '@angular/core';
 
 /**
  * Animates the numeric part of the host's text content (e.g. "11+", "95%", "30")
@@ -26,7 +32,9 @@ export class CountUp {
     const match = original.match(/^(\D*?)(\d+)(\D*)$/);
     if (!match) return;
 
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const reducedMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)',
+    ).matches;
     if (reducedMotion || !('IntersectionObserver' in window)) return;
 
     const [, prefix, digits, suffix] = match;

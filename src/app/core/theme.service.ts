@@ -1,5 +1,12 @@
-import {afterNextRender, DOCUMENT, inject, Injectable, PLATFORM_ID, signal,} from '@angular/core';
-import {isPlatformBrowser} from '@angular/common';
+import {
+  afterNextRender,
+  DOCUMENT,
+  inject,
+  Injectable,
+  PLATFORM_ID,
+  signal,
+} from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 
 export type Theme = 'light' | 'dark';
 
@@ -31,12 +38,18 @@ export class ThemeService {
     } catch {
       // Storage blocked (cookies disabled, locked-down webview).
     }
-    const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const prefersDarkMode = window.matchMedia(
+      '(prefers-color-scheme: dark)',
+    ).matches;
 
     this.setTheme(
-      this.#isTheme(domTheme) ? domTheme
-        : this.#isTheme(savedTheme) ? savedTheme
-        : prefersDarkMode ? 'dark' : 'light',
+      this.#isTheme(domTheme)
+        ? domTheme
+        : this.#isTheme(savedTheme)
+          ? savedTheme
+          : prefersDarkMode
+            ? 'dark'
+            : 'light',
     );
   }
 

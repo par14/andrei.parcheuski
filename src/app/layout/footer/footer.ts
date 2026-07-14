@@ -5,8 +5,12 @@ import { PORTFOLIO_DATA } from '../../core/portfolio.data';
 @Component({
   selector: 'ngp-footer',
   template: `
-    <span class="footer-main-message"> {{ PORTFOLIO_DATA.footerInfo.mainMessage }} </span>
-    <span class="footer-sub-message"> {{ PORTFOLIO_DATA.footerInfo.subMessage }} </span>
+    <span class="footer-main-message">
+      {{ PORTFOLIO_DATA.footerInfo.mainMessage }}
+    </span>
+    <span class="footer-sub-message">
+      {{ PORTFOLIO_DATA.footerInfo.subMessage }}
+    </span>
   `,
   styleUrl: './footer.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

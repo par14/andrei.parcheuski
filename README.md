@@ -23,12 +23,17 @@ Personal portfolio of **Andrei Parcheuski** — Senior Angular Developer (3D / W
 
 ## Commands
 
-| Task            | Command          |
-| --------------- | ---------------- |
-| Dev server      | `npm start`      |
-| Production build| `npm run build`  |
-| Unit tests      | `npm test`       |
-| Format          | `npm run format:write` |
+| Task             | Command                |
+| ---------------- | ---------------------- |
+| Dev server       | `npm start`            |
+| Production build | `npm run build`        |
+| Unit tests       | `npm test`             |
+| Format           | `npm run format:write` |
 
 Content lives in `src/app/core/portfolio.data.ts`; the downloadable CV is
-`public/cv.pdf`.
+`public/cv.pdf`. Its reproducible source is `scripts/generate_cv.py`:
+
+```bash
+python3 -m pip install -r scripts/requirements.txt
+python3 scripts/generate_cv.py
+```

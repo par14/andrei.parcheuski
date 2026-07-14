@@ -1,17 +1,17 @@
-import {afterNextRender, ChangeDetectionStrategy, Component} from '@angular/core';
-import {inject as injectAnalytics} from '@vercel/analytics';
+import {
+  afterNextRender,
+  ChangeDetectionStrategy,
+  Component,
+} from '@angular/core';
+import { inject as injectAnalytics } from '@vercel/analytics';
 
-import {Layout} from './layout/layout';
+import { Layout } from './layout/layout';
 
 @Component({
   selector: 'app-root',
-  imports: [
-    Layout,
-  ],
-  template: `
-    <layout/>
-  `,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  imports: [Layout],
+  template: ` <layout /> `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
   constructor() {

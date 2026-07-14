@@ -5,8 +5,14 @@
     <title>Andrei Parcheuski — Senior Angular Developer · 3D / WebGL</title>
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Andrei Parcheuski — Senior Angular Developer with 11+ years building production-grade web apps and 3D product configurators. Angular, NgRx, RxJS, Signals, Three.js, WebGL, React, Next.js." />
-    <meta name="keywords" content="Andrei Parcheuski, Senior Angular Developer, Frontend Team Lead, Angular, NgRx, RxJS, Signals, React, Next.js, Three.js, WebGL, frontend architecture, Warsaw" />
+    <meta
+      name="description"
+      content="Andrei Parcheuski — Senior Angular Developer with 11+ years building production-grade web apps and 3D product configurators. Angular, NgRx, RxJS, Signals, Three.js, WebGL, React, Next.js."
+    />
+    <meta
+      name="keywords"
+      content="Andrei Parcheuski, Senior Angular Developer, Frontend Team Lead, Angular, NgRx, RxJS, Signals, React, Next.js, Three.js, WebGL, frontend architecture, Warsaw"
+    />
     <meta name="author" content="Andrei Parcheuski" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <link rel="canonical" href="https://andreiparcheuski.com/" />
@@ -18,26 +24,64 @@
     <meta property="profile:first_name" content="Andrei" />
     <meta property="profile:last_name" content="Parcheuski" />
     <meta property="og:url" content="https://andreiparcheuski.com/" />
-    <meta property="og:title" content="Andrei Parcheuski — Senior Angular Developer · 3D / WebGL" />
-    <meta property="og:description" content="11+ years building production-grade web apps. Angular ecosystem specialist (Signals, NgRx, RxJS), with React, Next.js, and 3D/AR experience." />
-    <meta property="og:image" content="https://andreiparcheuski.com/og-image.png" />
+    <meta
+      property="og:title"
+      content="Andrei Parcheuski — Senior Angular Developer · 3D / WebGL"
+    />
+    <meta
+      property="og:description"
+      content="11+ years building production-grade web apps. Angular ecosystem specialist (Signals, NgRx, RxJS), with React, Next.js, and 3D/AR experience."
+    />
+    <meta
+      property="og:image"
+      content="https://andreiparcheuski.com/og-image.png"
+    />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Andrei Parcheuski — Senior Angular Developer · 3D / WebGL" />
+    <meta
+      property="og:image:alt"
+      content="Andrei Parcheuski — Senior Angular Developer · 3D / WebGL"
+    />
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content="https://andreiparcheuski.com/" />
-    <meta property="twitter:title" content="Andrei Parcheuski — Senior Angular Developer · 3D / WebGL" />
-    <meta property="twitter:description" content="11+ years building production-grade web apps. Angular ecosystem specialist (Signals, NgRx, RxJS), with React, Next.js, and 3D/AR experience." />
-    <meta property="twitter:image" content="https://andreiparcheuski.com/og-image.png" />
+    <meta
+      property="twitter:title"
+      content="Andrei Parcheuski — Senior Angular Developer · 3D / WebGL"
+    />
+    <meta
+      property="twitter:description"
+      content="11+ years building production-grade web apps. Angular ecosystem specialist (Signals, NgRx, RxJS), with React, Next.js, and 3D/AR experience."
+    />
+    <meta
+      property="twitter:image"
+      content="https://andreiparcheuski.com/og-image.png"
+    />
 
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-    <link rel="icon" type="image/png" sizes="180x180" href="apple-touch-icon.png" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="180x180"
+      href="apple-touch-icon.png"
+    />
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
     <meta name="theme-color" content="#050d0c" />
-    <link rel="preload" href="/fonts/inter-var-latin.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/space-grotesk-var-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link
+      rel="preload"
+      href="/fonts/inter-var-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/space-grotesk-var-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
 
     <!-- Structured data: Person -->
     <script type="application/ld+json">
@@ -84,12 +128,16 @@
       // Set the theme before first paint to avoid a light/dark flash.
       (function () {
         try {
-          var t = localStorage.getItem('portfolio-theme');
-          if (t !== 'light' && t !== 'dark') {
-            t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          var t = localStorage.getItem("portfolio-theme");
+          if (t !== "light" && t !== "dark") {
+            t = window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
           }
-          document.documentElement.setAttribute('data-theme', t);
-        } catch (e) { /* SSR-safe no-op */ }
+          document.documentElement.setAttribute("data-theme", t);
+        } catch (e) {
+          /* SSR-safe no-op */
+        }
       })();
     </script>
   </head>

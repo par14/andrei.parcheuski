@@ -13,7 +13,9 @@
   font-size: var(--font-size-base);
   margin-bottom: var(--space-8);
   position: relative;
-  transition: padding var(--transition-normal), margin var(--transition-normal);
+  transition:
+    padding var(--transition-normal),
+    margin var(--transition-normal);
 }
 
 /* Content container */
@@ -44,15 +46,23 @@ h3 {
   background-clip: text;
   -webkit-text-fill-color: transparent;
   text-transform: uppercase;
-  transition: font-size var(--transition-normal), margin var(--transition-normal);
+  transition:
+    font-size var(--transition-normal),
+    margin var(--transition-normal);
   position: relative;
   display: inline-block;
 }
 
 /* ===== ANIMATIONS ===== */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 :host {

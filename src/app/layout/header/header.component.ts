@@ -7,7 +7,13 @@ import { CONTACT_INFO, PORTFOLIO_DATA } from '../../core/portfolio.data';
   template: `
     <header>
       <a class="brand" href="/" aria-label="Andrei Parcheuski — home">
-        <img src="favicon.svg" alt="" class="brand-mark" width="36" height="36" />
+        <img
+          src="favicon.svg"
+          alt=""
+          class="brand-mark"
+          width="36"
+          height="36"
+        />
       </a>
 
       <span class="status">
@@ -17,8 +23,12 @@ import { CONTACT_INFO, PORTFOLIO_DATA } from '../../core/portfolio.data';
 
       <div class="right-header-content">
         <ngp-theme-switcher></ngp-theme-switcher>
-        <a href="/cv.pdf" download aria-label="Download CV in PDF format">Download CV</a>
-        <a href="mailto:{{ email }}" aria-label="Send email to contact me">Contact me</a>
+        <a href="/cv.pdf" download aria-label="Download CV in PDF format"
+          >Download CV</a
+        >
+        <a href="mailto:{{ email }}" aria-label="Send email to contact me"
+          >Contact me</a
+        >
       </div>
     </header>
   `,

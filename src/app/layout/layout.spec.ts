@@ -30,12 +30,14 @@ describe('Layout (smoke)', () => {
   it('renders the hero with name and role', () => {
     expect(el.querySelector('h1')?.textContent).toContain('Andrei');
     expect(el.querySelector('h1')?.textContent).toContain('Parcheuski');
-    expect(el.querySelector('.role')?.textContent).toContain('Senior Angular Developer');
+    expect(el.querySelector('.role')?.textContent).toContain(
+      'Senior Angular Developer',
+    );
   });
 
   it('renders every content section', () => {
-    const titles = Array.from(el.querySelectorAll('ngp-section h3')).map(
-      (h) => h.textContent?.trim(),
+    const titles = Array.from(el.querySelectorAll('ngp-section h3')).map((h) =>
+      h.textContent?.trim(),
     );
     expect(titles).toEqual([
       'About',
@@ -68,7 +70,8 @@ describe('Layout (smoke)', () => {
   });
 
   it('computes years of experience from the start year', () => {
-    const years = new Date().getFullYear() - PORTFOLIO_DATA.experienceOverview.startYear;
+    const years =
+      new Date().getFullYear() - PORTFOLIO_DATA.experienceOverview.startYear;
     expect(el.querySelector('.experience-section span')?.textContent).toContain(
       `${years} years of experience`,
     );

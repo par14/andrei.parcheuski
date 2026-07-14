@@ -62,7 +62,9 @@
   -webkit-text-fill-color: transparent;
 
   /* Animation */
-  transition: font-size var(--transition-normal), margin var(--transition-normal);
+  transition:
+    font-size var(--transition-normal),
+    margin var(--transition-normal);
 }
 
 /* ===== RESPONSIVE STYLES ===== */

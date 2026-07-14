@@ -27,7 +27,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform var(--transition-normal), color var(--transition-fast);
+  transition:
+    transform var(--transition-normal),
+    color var(--transition-fast);
   position: relative;
   z-index: 2;
 }
@@ -60,7 +62,7 @@
 /* ===== ANIMATIONS ===== */
 /* Ripple effect on click */
 .theme-toggle::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;

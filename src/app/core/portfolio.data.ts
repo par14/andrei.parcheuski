@@ -114,7 +114,7 @@ export const CAREER_ENTRIES: CareerEntryInfo[] = [
     role: 'Full-Stack Web Developer',
     achievements: [
       'Migrated a legacy Learning Management System to a modern React UI on a Ruby on Rails backend.',
-          ],
+    ],
   },
   {
     company: 'SoftClub',
@@ -148,23 +148,60 @@ export const EDUCATION: EducationInfo[] = [
 export const SKILL_GROUPS: SkillGroupInfo[] = [
   {
     name: 'Core',
-    skills: ['Angular', 'TypeScript', 'RxJS', 'Signals', 'NgRx', 'NgRx Signal Store'],
+    skills: [
+      'Angular',
+      'TypeScript',
+      'RxJS',
+      'Signals',
+      'NgRx',
+      'NgRx Signal Store',
+    ],
   },
   {
     name: 'Frontend',
-    skills: ['React', 'Next.js', 'Reactive Forms', 'Angular Material', 'Tailwind CSS', 'SCSS', 'SSR'],
+    skills: [
+      'React',
+      'Next.js',
+      'Reactive Forms',
+      'Angular Material',
+      'Tailwind CSS',
+      'SCSS',
+      'SSR',
+    ],
   },
   {
     name: '3D · AR · XR',
-    skills: ['Three.js', 'WebGL', 'Unreal Pixel Streaming', '8th Wall', 'WebXR / AR / VR'],
+    skills: [
+      'Three.js',
+      'WebGL',
+      'Unreal Pixel Streaming',
+      '8th Wall',
+      'WebXR / AR / VR',
+    ],
   },
   {
     name: 'Testing & Quality',
-    skills: ['Playwright', 'Vitest', 'Jest', 'Performance', 'Frontend Architecture'],
+    skills: [
+      'Playwright',
+      'Vitest',
+      'Jest',
+      'Performance',
+      'Frontend Architecture',
+    ],
   },
   {
     name: 'APIs & Tooling',
-    skills: ['GraphQL', 'REST APIs', 'Monorepo', 'npm packages', 'CI/CD', 'Docker', 'AWS', 'Azure', 'i18n'],
+    skills: [
+      'GraphQL',
+      'REST APIs',
+      'Monorepo',
+      'npm packages',
+      'CI/CD',
+      'Docker',
+      'AWS',
+      'Azure',
+      'i18n',
+    ],
   },
 ];
 

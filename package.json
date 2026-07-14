@@ -7,8 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "format:test": "prettier --list-different \"./src/**/*.{ts,html,scss,json}\"",
-    "format:write": "prettier --write \"./src/**/*.{ts,html,scss,json}\""
+    "format:test": "prettier --list-different \"./src/**/*.{ts,html,css,scss,json}\" \"./*.{json,md}\"",
+    "format:write": "prettier --write \"./src/**/*.{ts,html,css,scss,json}\" \"./*.{json,md}\""
   },
   "prettier": {
     "overrides": [
@@ -21,6 +21,9 @@
     ]
   },
   "private": true,
+  "engines": {
+    "node": ">=22"
+  },
   "dependencies": {
     "@angular/common": "^22.0.5",
     "@angular/compiler": "^22.0.5",
@@ -44,5 +47,5 @@
     "typescript": "^6.0.3",
     "vitest": "^4.1.10"
   },
-  "description": "Personal portfolio \u2014 Senior Angular Developer (3D / WebGL)"
+  "description": "Personal portfolio — Senior Angular Developer (3D / WebGL)"
 }

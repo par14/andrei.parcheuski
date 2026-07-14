@@ -29,7 +29,9 @@ describe('CareerEntry', () => {
   it('renders role, company and an open-ended timespan', () => {
     const el = create(baseInputs);
 
-    expect(el.querySelector('.role')?.textContent).toContain('Senior Front-End Developer');
+    expect(el.querySelector('.role')?.textContent).toContain(
+      'Senior Front-End Developer',
+    );
     expect(el.textContent).toContain('3D Source');
     expect(el.textContent).toContain('2023 - Present');
   });

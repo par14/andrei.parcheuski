@@ -43,7 +43,9 @@ header {
   height: 36px;
   display: block;
   border-radius: 10px;
-  box-shadow: 0 0 0 1px var(--color-accent-muted), 0 4px 14px var(--color-shadow);
+  box-shadow:
+    0 0 0 1px var(--color-accent-muted),
+    0 4px 14px var(--color-shadow);
 }
 
 /* ===== TYPOGRAPHY ===== */
@@ -64,9 +66,11 @@ header {
   text-decoration: none;
   white-space: nowrap;
   position: relative;
-  /* Comfortable touch target without shifting the visual layout */
-  padding: var(--space-3) var(--space-2);
-  margin: calc(-1 * var(--space-3)) calc(-1 * var(--space-2));
+  /* Comfortable touch target without shifting the visual layout.
+     Horizontal extension stays at half the smallest flex gap so
+     adjacent link hit areas never overlap. */
+  padding: var(--space-3) var(--space-1);
+  margin: calc(-1 * var(--space-3)) calc(-1 * var(--space-1));
   transition: color var(--transition-fast);
 }
 
