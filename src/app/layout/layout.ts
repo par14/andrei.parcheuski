@@ -1,24 +1,18 @@
-import {
-  afterNextRender,
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-import { CareerEntry } from '../ui/career-entry/career-entry';
 import { PORTFOLIO_DATA } from '../core/portfolio.data';
-import { SkillsComponent } from '../ui/skills/skills';
-import { Languages } from '../ui/language/languages';
-import { ContactComponent } from '../ui/tuple/tuple';
-import { SkillComponent } from '../ui/skills/skill';
+import { CareerEntry } from '../ui/career-entry/career-entry';
+import { Hero } from '../ui/hero/hero';
+import { Highlights } from '../ui/highlights/highlights';
 import { Language } from '../ui/language/language';
-import { Section } from '../ui/section/section';
+import { Languages } from '../ui/language/languages';
 import { LinkComponent } from '../ui/link/link';
-import { CountUp } from '../ui/count-up/count-up';
-
-import { HeaderComponent } from './header/header.component';
+import { Section } from '../ui/section/section';
+import { SkillComponent } from '../ui/skills/skill';
+import { SkillsComponent } from '../ui/skills/skills';
+import { ContactComponent } from '../ui/tuple/tuple';
 import { Footer } from './footer/footer';
+import { HeaderComponent } from './header/header.component';
 
 @Component({
   selector: 'layout',
@@ -26,6 +20,8 @@ import { Footer } from './footer/footer';
   styleUrl: './layout.css',
   imports: [
     HeaderComponent,
+    Hero,
+    Highlights,
     Section,
     CareerEntry,
     SkillsComponent,
@@ -35,21 +31,15 @@ import { Footer } from './footer/footer';
     Footer,
     Languages,
     Language,
-    CountUp,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Layout {
-  PORTFOLIO_DATA = PORTFOLIO_DATA;
-
-  // Baked in at prerender time; refreshed after hydration so the
-  // experience counter never shows a stale year from an old build.
-  currentYear = signal(new Date().getFullYear());
-  yearsOfExperience = computed(
-    () => this.currentYear() - PORTFOLIO_DATA.experienceOverview.startYear,
+  protected readonly data = PORTFOLIO_DATA;
+  protected readonly featuredProject = PORTFOLIO_DATA.links.find(
+    (link) => link.image,
   );
-
-  constructor() {
-    afterNextRender(() => this.currentYear.set(new Date().getFullYear()));
-  }
+  protected readonly otherProjects = PORTFOLIO_DATA.links.filter(
+    (link) => link !== this.featuredProject,
+  );
 }

@@ -1,102 +1,39 @@
-/*
- * SECTION COMPONENT STYLES
- * Clean, modern styling for content sections
- */
-
-/* ===== COMPONENT LAYOUT ===== */
 :host {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  padding-top: var(--space-5);
-  color: var(--color-text-primary);
-  font-family: var(--font-family-body);
-  font-size: var(--font-size-base);
-  margin-bottom: var(--space-8);
-  position: relative;
-  transition:
-    padding var(--transition-normal),
-    margin var(--transition-normal);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2.2fr);
+  gap: var(--space-8);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-line);
 }
 
-/* Content container */
+.head {
+  position: sticky;
+  top: var(--space-6);
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+h2 {
+  font-size: var(--step-2);
+  font-weight: var(--weight-medium);
+}
+
 .content {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
-  grid-column: 2;
-  transition: gap var(--transition-normal);
-  position: relative;
+  gap: var(--space-8);
+  min-width: 0;
 }
 
-/* ===== TYPOGRAPHY ===== */
-/* Section heading */
-h3 {
-  font-family: var(--font-family-heading);
-  font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-semibold);
-  letter-spacing: var(--letter-spacing-tight);
-  margin-top: 0;
-  margin-bottom: 0;
-  background: linear-gradient(
-    90deg,
-    var(--color-text-primary) 0%,
-    var(--color-accent) 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-transform: uppercase;
-  transition:
-    font-size var(--transition-normal),
-    margin var(--transition-normal);
-  position: relative;
-  display: inline-block;
-}
-
-/* ===== ANIMATIONS ===== */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-:host {
-  animation: fadeIn 0.5s ease-out forwards;
-}
-
-/* ===== RESPONSIVE STYLES ===== */
-/* Tablet layout (992px and below) */
-@media (max-width: 992px) {
+@media (max-width: 760px) {
   :host {
-    grid-template-columns: 1fr 2fr;
-    gap: var(--space-4);
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-5);
   }
 
-  .content {
-    gap: var(--space-8);
-  }
-}
-
-/* Mobile layout (576px and below) */
-@media (max-width: 576px) {
-  :host {
-    grid-template-columns: 1fr;
-    gap: var(--space-4);
-  }
-
-  h3 {
-    margin-bottom: var(--space-5);
-    font-size: var(--font-size-xl);
-  }
-
-  .content {
-    grid-column: 1;
-    gap: var(--space-6);
-    margin-top: var(--space-4);
+  .head {
+    position: static;
   }
 }

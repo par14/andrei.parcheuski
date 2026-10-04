@@ -8,26 +8,30 @@ import {
 @Component({
   selector: 'ngp-career-entry',
   template: `
-    <h4 class="role">{{ role() }}</h4>
-    <div class="heading">
-      <span>{{ company() }}</span>
-      <span>{{ location() }}</span>
-      <span>{{ timespan() }}</span>
+    <p class="when">
+      <span class="start">{{ startYear() }}</span>
+      <span class="end">– {{ endYear() ?? 'Present' }}</span>
+    </p>
+    <div class="body">
+      <h3 class="role">{{ role() }}</h3>
+      <p class="where">
+        <span>{{ company() }}</span>
+        <span>{{ location() }}</span>
+      </p>
+      @if (description()) {
+        <p class="description">{{ description() }}</p>
+      }
+      @if (emphasized().length) {
+        <ul class="achievements">
+          @for (achievement of emphasized(); track $index) {
+            <li [innerHTML]="achievement"></li>
+          }
+        </ul>
+      }
     </div>
-    @if (description()) {
-      <span class="description">
-        {{ description() }}
-      </span>
-    }
-    @if (emphasized().length) {
-      <ul class="achievements">
-        @for (achievement of emphasized(); track $index) {
-          <li [innerHTML]="achievement"></li>
-        }
-      </ul>
-    }
   `,
   styleUrl: 'career-entry.css',
+  host: { '[class.current]': 'endYear() === undefined' },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CareerEntry {
@@ -38,11 +42,6 @@ export class CareerEntry {
   role = input.required<string>();
   description = input<string>();
   achievements = input<string[]>([]);
-
-  timespan = computed(() => {
-    const end = this.endYear();
-    return `${this.startYear()} - ${end ?? 'Present'}`;
-  });
 
   /** Achievements with numbers highlighted — computed once, not on every CD cycle. */
   protected readonly emphasized = computed(() =>

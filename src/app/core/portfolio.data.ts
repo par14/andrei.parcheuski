@@ -10,7 +10,6 @@ import {
   LinkInfo,
   NgPortfolio,
   PersonalInfo,
-  Quote,
   SkillGroupInfo,
   StatusInfo,
 } from './portfolio.model';
@@ -51,7 +50,7 @@ export const CAREER_ENTRIES: CareerEntryInfo[] = [
     achievements: [
       'Architect and build 3D product configurators with Angular and Three.js — approximately 30 enterprise projects on a shared 80,000-line codebase.',
       'Integrated real-time Unreal Engine pixel-streaming into the Angular front end for high-fidelity 3D rendering.',
-      'Authored and published 8 internal npm packages under @3dsource — a shared Angular UI component library, data loaders, and configurator APIs.',
+      'Authored and published 8 public npm packages under @3dsource — a shared Angular UI component library, data loaders, and configurator APIs.',
       'Built an external integration API enabling embedding and two-way interaction via iframe.',
       'Reached 95% test coverage on core modules — Playwright E2E with GraphQL stubbing and code coverage, plus Vitest unit tests.',
       'Led a full front-end performance optimization of the platform.',
@@ -215,6 +214,7 @@ export const LINKS: LinkInfo[] = [
   {
     text: '3D Product Configurators — 3D Source',
     link: 'https://www.3dsource.com',
+    image: 'stills/sofa-feature.webp',
     description:
       'Architected ~30 enterprise 3D configurators on a shared 80k-line Angular + Three.js codebase, with real-time Unreal Engine pixel-streaming and 8 published @3dsource npm packages. Reached 95% test coverage with Playwright and Vitest.',
   },
@@ -232,18 +232,22 @@ export const LINKS: LinkInfo[] = [
   },
   {
     text: '@3dsource npm packages',
-    link: 'https://www.npmjs.com/search?q=%403dsource',
+    link: 'https://www.npmjs.com/org/3dsource',
     description:
       '8 published packages powering the 3D Source platform — a shared Angular UI component library, data loaders, and configurator APIs. Public proof of work on npm.',
   },
 ];
 
+/** Single source for the address used by header, contact list and footer. */
+export const CONTACT_EMAIL = 'parchevscky17@gmail.com';
+export const LINKEDIN_URL = 'https://linkedin.com/in/andrewpar14';
+
 export const CONTACT_INFO: ContactInfo[] = [
   {
     heading: 'Email',
-    body: 'parchevscky17@gmail.com',
+    body: CONTACT_EMAIL,
     clickable: true,
-    link: 'mailto:parchevscky17@gmail.com',
+    link: `mailto:${CONTACT_EMAIL}`,
   },
   {
     heading: 'Phone',
@@ -255,7 +259,7 @@ export const CONTACT_INFO: ContactInfo[] = [
     heading: 'LinkedIn',
     body: 'andrewpar14',
     clickable: true,
-    link: 'https://linkedin.com/in/andrewpar14',
+    link: LINKEDIN_URL,
   },
   {
     heading: 'Location',
@@ -263,13 +267,8 @@ export const CONTACT_INFO: ContactInfo[] = [
   },
 ];
 
-export const QUOTE: Quote = {
-  text: 'Great frontend is more than pixels — it is architecture, performance, and a team that ships.',
-};
-
 export const FOOTER_INFO: FooterInfo = {
   mainMessage: 'Let’s build something remarkable.',
-  subMessage: 'Open to senior and lead frontend engineering roles.',
 };
 
 export const STATUS_INFO: StatusInfo = {
@@ -287,7 +286,6 @@ export const PORTFOLIO_DATA: NgPortfolio = {
   languages: LANGUAGES,
   links: LINKS,
   contactInfo: CONTACT_INFO,
-  quote: QUOTE,
   footerInfo: FOOTER_INFO,
   statusInfo: STATUS_INFO,
 };

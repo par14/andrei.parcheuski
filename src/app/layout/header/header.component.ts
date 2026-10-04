@@ -1,35 +1,26 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+
 import { ThemeSwitcherComponent } from '../../ui/theme-switcher/theme-switcher';
-import { CONTACT_INFO, PORTFOLIO_DATA } from '../../core/portfolio.data';
+import { CONTACT_EMAIL, STATUS_INFO } from '../../core/portfolio.data';
 
 @Component({
   selector: 'ngp-header',
   template: `
-    <header>
-      <a class="brand" href="/" aria-label="Andrei Parcheuski — home">
-        <img
-          src="favicon.svg"
-          alt=""
-          class="brand-mark"
-          width="36"
-          height="36"
-        />
+    <header class="header">
+      <a class="brand" href="/" aria-label="Andrei Parcheuski, home">
+        <img src="favicon.svg" alt="" width="32" height="32" />
       </a>
 
-      <span class="status">
-        <span class="pulse-circle" aria-hidden="true"></span>
-        {{ PORTFOLIO_DATA.statusInfo.text }}
-      </span>
+      <p class="status">
+        <span class="dot" aria-hidden="true"></span>
+        {{ status }}
+      </p>
 
-      <div class="right-header-content">
-        <ngp-theme-switcher></ngp-theme-switcher>
-        <a href="/cv.pdf" download aria-label="Download CV in PDF format"
-          >Download CV</a
-        >
-        <a href="mailto:{{ email }}" aria-label="Send email to contact me"
-          >Contact me</a
-        >
-      </div>
+      <nav class="nav" aria-label="Quick links">
+        <a href="/cv.pdf" download aria-label="Download CV (PDF)">CV</a>
+        <a href="mailto:{{ email }}">Email</a>
+        <ngp-theme-switcher />
+      </nav>
     </header>
   `,
   imports: [ThemeSwitcherComponent],
@@ -37,7 +28,6 @@ import { CONTACT_INFO, PORTFOLIO_DATA } from '../../core/portfolio.data';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderComponent {
-  PORTFOLIO_DATA = PORTFOLIO_DATA;
-  protected readonly email =
-    CONTACT_INFO.find((contact) => contact.heading === 'Email')?.body ?? '';
+  protected readonly status = STATUS_INFO.text;
+  protected readonly email = CONTACT_EMAIL;
 }

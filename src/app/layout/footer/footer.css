@@ -1,94 +1,95 @@
-/*
- * FOOTER COMPONENT STYLES
- * Clean, modern styling for the portfolio footer
- */
-
-/* ===== COMPONENT CONTAINER ===== */
 :host {
-  padding-top: var(--space-16);
-  padding-bottom: var(--space-16);
   display: block;
-  position: relative;
-  overflow: hidden;
 }
 
-/* ===== TYPOGRAPHY ===== */
-/* Main message styling */
-.footer-main-message {
-  /* Typography */
-  display: block;
-  /* Fluid: wraps instead of clipping in narrow columns */
-  font-size: clamp(2.5rem, 9vw, var(--font-size-7xl));
-  font-family: var(--font-family-heading);
-  font-weight: var(--font-weight-bold);
-  text-transform: uppercase;
-  letter-spacing: var(--letter-spacing-tight);
-  line-height: var(--line-height-tight);
-
-  /* Gradient text effect */
-  background: linear-gradient(
-    90deg,
-    var(--color-text-primary) 0%,
-    var(--color-accent) 50%,
-    var(--color-secondary) 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-
-  /* Animation */
-  transition: font-size var(--transition-normal);
+.footer {
+  container-type: inline-size;
+  padding-block: var(--section-gap) var(--space-10);
 }
 
-/* Sub message styling */
-.footer-sub-message {
-  /* Typography */
-  display: block;
-  margin-top: var(--space-4);
-  font-size: clamp(1.25rem, 4vw, var(--font-size-3xl));
-  font-family: var(--font-family-body);
-  text-transform: uppercase;
-  font-weight: var(--font-weight-bold);
-  text-align: right;
+.lead {
+  color: var(--color-text-2);
+  font-size: var(--step-2);
+  font-weight: var(--weight-medium);
+}
 
-  /* Gradient text effect */
-  background: linear-gradient(
-    90deg,
-    var(--color-secondary) 0%,
-    var(--color-accent) 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-
-  /* Animation */
+/* The page's closing typographic moment. Sized to the container so the
+   address never wraps or overflows. */
+.email {
+  display: inline-block;
+  margin-top: var(--space-3);
+  color: var(--color-text);
+  font-size: clamp(1.25rem, 7.2cqi, 5rem);
+  font-weight: var(--weight-semibold);
+  line-height: 1.05;
+  letter-spacing: var(--tracking-display);
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0% 2px
+    no-repeat;
+  padding-bottom: 0.08em;
   transition:
-    font-size var(--transition-normal),
-    margin var(--transition-normal);
+    background-size 500ms var(--ease-out),
+    color var(--duration-fast) ease;
 }
 
-/* ===== RESPONSIVE STYLES ===== */
-/* Tablet layout (992px and below) */
-@media (max-width: 992px) {
-  :host {
-    margin-top: var(--space-12);
-    margin-bottom: var(--space-12);
-  }
+.email:hover {
+  color: var(--color-accent);
+  background-size: 100% 2px;
 }
 
-/* Mobile layout (576px and below) */
-@media (max-width: 576px) {
-  :host {
-    margin-top: var(--space-8);
-    margin-bottom: var(--space-8);
-  }
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4) var(--space-6);
+  margin-top: var(--space-10);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-line);
+  font-size: var(--step--1);
+}
 
-  .footer-main-message {
-    line-height: 1.1;
-    text-align: left;
-  }
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-2);
+}
 
-  .footer-sub-message {
-    text-align: left;
-  }
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-status);
+}
+
+.links {
+  display: flex;
+  gap: var(--space-5);
+  list-style: none;
+}
+
+.links a {
+  color: var(--color-text);
+  font-weight: var(--weight-medium);
+}
+
+.links a:hover {
+  color: var(--color-accent);
+}
+
+.credit {
+  margin-top: var(--space-4);
+  color: var(--color-text-2);
+  font-size: var(--step--1);
+}
+
+.credit a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--color-line-strong);
+  text-underline-offset: 0.2em;
+}
+
+.credit a:hover {
+  color: var(--color-text);
 }

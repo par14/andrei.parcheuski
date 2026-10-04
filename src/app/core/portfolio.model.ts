@@ -52,6 +52,8 @@ export interface LinkInfo {
   text: string;
   link: string;
   description: string;
+  /** Still image; the first project with one is shown as a featured card. */
+  image?: string;
 }
 
 export interface ContactInfo {
@@ -61,13 +63,8 @@ export interface ContactInfo {
   link?: string;
 }
 
-export interface Quote {
-  text: string;
-}
-
 export interface FooterInfo {
   mainMessage: string;
-  subMessage: string;
 }
 
 export interface StatusInfo {
@@ -85,7 +82,6 @@ export interface NgPortfolio {
   languages: LanguageInfo[];
   links: LinkInfo[];
   contactInfo: ContactInfo[];
-  quote: Quote;
   footerInfo: FooterInfo;
   statusInfo: StatusInfo;
 }

@@ -1,0 +1,99 @@
+<div class="hero container">
+  <div class="copy">
+    <p class="meta">
+      <span>{{ info.location }}</span>
+      <span>{{ startYear }}–{{ currentYear() }}</span>
+    </p>
+    <h1 class="name">
+      <span>{{ info.firstName }}</span>
+      <span>{{ info.lastName }}</span>
+    </h1>
+    <p class="role">{{ info.role }}</p>
+    <p class="tagline">{{ info.tagline }}</p>
+    <div class="actions">
+      <a
+        class="btn btn-primary"
+        href="/cv.pdf"
+        download
+        aria-label="Download CV (PDF)"
+        >Download CV</a
+      >
+      <a class="btn btn-ghost" href="#contact">Contact me</a>
+    </div>
+  </div>
+
+  <div class="studio">
+    <div class="scene">
+      @defer (when loadScene()) {
+        <ngp-hero-scene
+          [theme]="theme()"
+          [finish]="finish()"
+          [turns]="turns()"
+          (stateChange)="sceneState.set($event)"
+        />
+      } @error {
+        <ng-container *ngTemplateOutlet="poster" />
+      }
+      @if (sceneState() === "off") {
+        <ng-container *ngTemplateOutlet="poster" />
+      }
+      <ng-template #poster>
+        <img
+          class="poster"
+          src="stills/sofa.webp"
+          alt=""
+          width="1156"
+          height="586"
+          decoding="async"
+        />
+      </ng-template>
+    </div>
+
+    <div
+      class="configurator"
+      role="group"
+      aria-label="Configure the 3D sofa"
+      [class.is-ready]="sceneState() === 'on'"
+    >
+      <div class="swatches">
+        @for (option of finishes; track option.id) {
+          <button
+            type="button"
+            class="swatch"
+            [style.--swatch]="option.swatch"
+            [attr.aria-pressed]="option.id === finish()"
+            [attr.aria-label]="option.label"
+            (click)="finish.set(option.id)"
+          ></button>
+        }
+      </div>
+      <span class="finish-name" aria-live="polite">{{
+        currentFinish().label
+      }}</span>
+      <button
+        type="button"
+        class="rotate"
+        aria-label="Rotate the sofa"
+        (click)="turns.set(turns() + 1)"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          width="18"
+          height="18"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M20 12a8 8 0 1 1-2.34-5.66" />
+          <path d="M20 4v4.5h-4.5" />
+        </svg>
+      </button>
+    </div>
+    <p class="caption" [class.is-ready]="sceneState() === 'on'">
+      Live 3D configurator. Drag to rotate.
+    </p>
+  </div>
+</div>
