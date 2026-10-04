@@ -87,6 +87,8 @@ describe('Layout (smoke)', () => {
     expect(swatches.length).toBe(3);
     expect(swatches[0].getAttribute('aria-pressed')).toBe('true');
     expect(el.querySelector('ngp-hero-scene')).toBeNull();
+    // jsdom has no WebGL 2: the still is shown and `three` is never requested.
+    expect(el.querySelector('ngp-hero .poster')).not.toBeNull();
   });
 
   it('features the first project with an image', () => {

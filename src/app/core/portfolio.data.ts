@@ -10,7 +10,6 @@ import {
   LinkInfo,
   NgPortfolio,
   PersonalInfo,
-  Quote,
   SkillGroupInfo,
   StatusInfo,
 } from './portfolio.model';
@@ -239,12 +238,16 @@ export const LINKS: LinkInfo[] = [
   },
 ];
 
+/** Single source for the address used by header, contact list and footer. */
+export const CONTACT_EMAIL = 'parchevscky17@gmail.com';
+export const LINKEDIN_URL = 'https://linkedin.com/in/andrewpar14';
+
 export const CONTACT_INFO: ContactInfo[] = [
   {
     heading: 'Email',
-    body: 'parchevscky17@gmail.com',
+    body: CONTACT_EMAIL,
     clickable: true,
-    link: 'mailto:parchevscky17@gmail.com',
+    link: `mailto:${CONTACT_EMAIL}`,
   },
   {
     heading: 'Phone',
@@ -256,7 +259,7 @@ export const CONTACT_INFO: ContactInfo[] = [
     heading: 'LinkedIn',
     body: 'andrewpar14',
     clickable: true,
-    link: 'https://linkedin.com/in/andrewpar14',
+    link: LINKEDIN_URL,
   },
   {
     heading: 'Location',
@@ -264,13 +267,8 @@ export const CONTACT_INFO: ContactInfo[] = [
   },
 ];
 
-export const QUOTE: Quote = {
-  text: 'Great frontend is more than pixels — it is architecture, performance, and a team that ships.',
-};
-
 export const FOOTER_INFO: FooterInfo = {
   mainMessage: 'Let’s build something remarkable.',
-  subMessage: 'Open to senior and lead frontend engineering roles.',
 };
 
 export const STATUS_INFO: StatusInfo = {
@@ -288,7 +286,6 @@ export const PORTFOLIO_DATA: NgPortfolio = {
   languages: LANGUAGES,
   links: LINKS,
   contactInfo: CONTACT_INFO,
-  quote: QUOTE,
   footerInfo: FOOTER_INFO,
   statusInfo: STATUS_INFO,
 };

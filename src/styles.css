@@ -282,6 +282,18 @@ button {
     box-shadow: none !important;
   }
 
+  html[data-theme],
+  :root {
+    --color-bg: #fff;
+    --color-surface: #fff;
+    --color-text: #000;
+    --color-text-2: #444;
+    --color-accent: #000;
+    --color-line: #ccc;
+    --color-line-strong: #999;
+    --color-chip: transparent;
+  }
+
   body {
     background: #fff;
     color: #000;

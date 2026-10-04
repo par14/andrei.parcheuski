@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { ThemeSwitcherComponent } from '../../ui/theme-switcher/theme-switcher';
-import { CONTACT_INFO, STATUS_INFO } from '../../core/portfolio.data';
+import { CONTACT_EMAIL, STATUS_INFO } from '../../core/portfolio.data';
 
 @Component({
   selector: 'ngp-header',
@@ -29,6 +29,5 @@ import { CONTACT_INFO, STATUS_INFO } from '../../core/portfolio.data';
 })
 export class HeaderComponent {
   protected readonly status = STATUS_INFO.text;
-  protected readonly email =
-    CONTACT_INFO.find((contact) => contact.heading === 'Email')?.body ?? '';
+  protected readonly email = CONTACT_EMAIL;
 }

@@ -63,13 +63,8 @@ export interface ContactInfo {
   link?: string;
 }
 
-export interface Quote {
-  text: string;
-}
-
 export interface FooterInfo {
   mainMessage: string;
-  subMessage: string;
 }
 
 export interface StatusInfo {
@@ -87,7 +82,6 @@ export interface NgPortfolio {
   languages: LanguageInfo[];
   links: LinkInfo[];
   contactInfo: ContactInfo[];
-  quote: Quote;
   footerInfo: FooterInfo;
   statusInfo: StatusInfo;
 }

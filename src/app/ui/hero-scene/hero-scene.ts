@@ -14,7 +14,7 @@ import {
 } from '@angular/core';
 
 import type { Theme } from '../../core/theme.service';
-import { FinishId, SceneState } from './hero-scene.config';
+import { canRenderScene, FinishId, SceneState } from './hero-scene.config';
 import {
   createHeroRuntime,
   HeroRuntime,
@@ -33,18 +33,15 @@ const MAX_PIXEL_RATIO = 1.5;
  * WebGL product shot for the hero. Loaded through `@defer`, so `three` lives
  * in a lazy chunk and nothing here runs during prerender.
  *
- * The frame loop runs outside change detection (plain rAF, no signal
- * writes) and pauses while the tab is hidden or the hero is off-screen.
+ * High-frequency input (pointer, scroll) and the frame loop use native
+ * listeners and plain rAF, so they never trigger change detection. The loop
+ * stops once the scene is still, and pauses while the tab is hidden or the
+ * hero is off-screen.
  */
 @Component({
   selector: 'ngp-hero-scene',
   template: `
-    <canvas
-      #canvas
-      aria-hidden="true"
-      (click)="onCanvasClick($event)"
-      (pointermove)="onCanvasHover($event)"
-    ></canvas>
+    <canvas #canvas aria-hidden="true" (click)="onCanvasClick($event)"></canvas>
   `,
   styleUrl: './hero-scene.css',
   host: { '[attr.data-state]': 'state()' },
@@ -71,6 +68,7 @@ export class HeroScene {
   #frame = 0;
   #pageVisible = true;
   #inView = true;
+  #size = { width: 0, height: 0 };
 
   constructor() {
     afterNextRender(() => this.#init());
@@ -93,15 +91,10 @@ export class HeroScene {
     if (this.#hits(event)) this.modelClick.emit();
   }
 
-  protected onCanvasHover(event: PointerEvent): void {
-    const canvas = event.currentTarget as HTMLCanvasElement;
-    canvas.style.cursor = this.#hits(event) ? 'pointer' : '';
-  }
-
   #hits(event: MouseEvent): boolean {
     const runtime = this.#runtime();
     if (!runtime) return false;
-    const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+    const rect = this.canvas().nativeElement.getBoundingClientRect();
     const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
     const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
     return runtime.hitTest(x, y);
@@ -112,39 +105,48 @@ export class HeroScene {
     this.stateChange.emit(state);
   }
 
+  /** Creates a runtime on the canvas; reports "off" when that fails. */
+  #build(reducedMotion: boolean): boolean {
+    try {
+      const runtime = this.#factory(this.canvas().nativeElement, {
+        reducedMotion,
+      });
+      const { width, height } = this.#size;
+      if (width && height) runtime.resize(width, height, this.#pixelRatio());
+      this.#runtime.set(runtime);
+      this.#setState('on');
+      return true;
+    } catch {
+      this.#runtime.set(null);
+      this.#setState('off');
+      return false;
+    }
+  }
+
+  #pixelRatio(): number {
+    return Math.min(window.devicePixelRatio || 1, MAX_PIXEL_RATIO);
+  }
+
   #init(): void {
-    const connection = (
-      navigator as Navigator & { connection?: { saveData?: boolean } }
-    ).connection;
-    if (!('WebGL2RenderingContext' in window) || connection?.saveData) {
+    if (!canRenderScene()) {
       this.#setState('off');
       return;
     }
 
-    const canvas = this.canvas().nativeElement;
     const reducedMotion = window.matchMedia(
       '(prefers-reduced-motion: reduce)',
     ).matches;
+    if (!this.#build(reducedMotion)) return;
 
-    let runtime: HeroRuntime;
-    try {
-      runtime = this.#factory(canvas, { reducedMotion });
-    } catch {
-      this.#setState('off');
-      return;
-    }
-
+    const canvas = this.canvas().nativeElement;
     const host = this.#host.nativeElement;
     const listeners = new AbortController();
     const { signal: abort } = listeners;
 
     const resizeObserver = new ResizeObserver(([entry]) => {
       const { width, height } = entry.contentRect;
-      runtime.resize(
-        width,
-        height,
-        Math.min(window.devicePixelRatio || 1, MAX_PIXEL_RATIO),
-      );
+      this.#size = { width, height };
+      this.#runtime()?.resize(width, height, this.#pixelRatio());
       this.#requestFrame();
     });
     resizeObserver.observe(host);
@@ -164,22 +166,34 @@ export class HeroScene {
       { signal: abort },
     );
 
-    const finePointer = window.matchMedia('(hover: hover)').matches;
-    if (finePointer && !reducedMotion) {
-      window.addEventListener(
+    if (window.matchMedia('(hover: hover)').matches) {
+      if (!reducedMotion) {
+        window.addEventListener(
+          'pointermove',
+          (event) => {
+            this.#runtime()?.setPointer(
+              (event.clientX / window.innerWidth) * 2 - 1,
+              -(event.clientY / window.innerHeight) * 2 + 1,
+            );
+            this.#requestFrame();
+          },
+          { passive: true, signal: abort },
+        );
+      }
+      // Pointer cursor only over the model itself.
+      canvas.addEventListener(
         'pointermove',
         (event) => {
-          runtime.setPointer(
-            (event.clientX / window.innerWidth) * 2 - 1,
-            -(event.clientY / window.innerHeight) * 2 + 1,
-          );
+          canvas.style.cursor = this.#hits(event) ? 'pointer' : '';
         },
         { passive: true, signal: abort },
       );
     }
 
     const onScroll = () => {
-      runtime.setScroll(window.scrollY / Math.max(window.innerHeight, 1));
+      this.#runtime()?.setScroll(
+        window.scrollY / Math.max(window.innerHeight, 1),
+      );
       this.#requestFrame();
     };
     window.addEventListener('scroll', onScroll, {
@@ -188,13 +202,28 @@ export class HeroScene {
     });
     onScroll();
 
+    // A lost context (app switch, GPU reset) shows the poster; when the
+    // browser restores it, the scene is rebuilt on the same canvas.
     canvas.addEventListener(
       'webglcontextlost',
       () => {
         cancelAnimationFrame(this.#frame);
         this.#frame = 0;
-        this.#runtime.set(null);
         this.#setState('off');
+      },
+      { signal: abort },
+    );
+    canvas.addEventListener(
+      'webglcontextrestored',
+      () => {
+        const previous = this.#runtime();
+        this.#runtime.set(null);
+        try {
+          previous?.dispose({ loseContext: false });
+        } catch {
+          // Handles from the lost context are already invalid.
+        }
+        if (this.#build(reducedMotion)) onScroll();
       },
       { signal: abort },
     );
@@ -205,22 +234,26 @@ export class HeroScene {
       listeners.abort();
       resizeObserver.disconnect();
       intersectionObserver.disconnect();
-      runtime.dispose();
+      this.#runtime()?.dispose();
+      this.#runtime.set(null);
     });
-
-    this.#runtime.set(runtime);
-    this.#setState('on');
   }
 
   readonly #tick = (time: number): void => {
     this.#frame = 0;
-    const runtime = this.#runtime();
-    if (runtime?.render(time)) this.#requestFrame();
+    if (this.#runtime()?.render(time)) this.#requestFrame();
   };
 
   #requestFrame(): void {
-    if (this.#frame || !this.#runtime() || !this.#pageVisible || !this.#inView)
+    if (
+      this.#frame ||
+      !this.#runtime() ||
+      this.state() !== 'on' ||
+      !this.#pageVisible ||
+      !this.#inView
+    ) {
       return;
+    }
     this.#frame = requestAnimationFrame(this.#tick);
   }
 }

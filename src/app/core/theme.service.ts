@@ -11,6 +11,12 @@ import { isPlatformBrowser } from '@angular/common';
 
 export type Theme = 'light' | 'dark';
 
+/** Browser UI colour per theme; mirrors --color-bg in styles.css. */
+const THEME_COLOR: Record<Theme, string> = {
+  dark: '#141a21',
+  light: '#eeefea',
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -65,18 +71,19 @@ export class ThemeService {
 
     // Progressive enhancement: animate the whole page between themes.
     const doc = this.#document as Document & {
-      startViewTransition?: (callback: () => void | Promise<void>) => void;
+      startViewTransition?: (callback: () => void) => void;
     };
     const reducedMotion =
       isPlatformBrowser(this.#platformId) &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (doc.startViewTransition && !reducedMotion) {
-      // Zoneless: wait for Angular to re-render (e.g. the toggle icon) so
-      // the "new" snapshot shows the finished state.
-      doc.startViewTransition(async () => {
+      // Zoneless: render synchronously so the "new" snapshot already shows
+      // the finished state (e.g. the toggle icon). whenStable() would also
+      // wait for unrelated pending work such as a lazy chunk download.
+      doc.startViewTransition(() => {
         apply();
-        await this.#appRef.whenStable();
+        this.#appRef.tick();
       });
     } else {
       apply();
@@ -87,6 +94,13 @@ export class ThemeService {
     this.theme.set(theme);
     if (isPlatformBrowser(this.#platformId)) {
       this.#document.documentElement.setAttribute('data-theme', theme);
+      // index.html ships OS-based theme-color tags; follow the chosen theme.
+      this.#document
+        .querySelectorAll('meta[name="theme-color"]')
+        .forEach((meta) => {
+          meta.removeAttribute('media');
+          meta.setAttribute('content', THEME_COLOR[theme]);
+        });
       try {
         localStorage.setItem(this.#THEME_KEY, theme);
       } catch {

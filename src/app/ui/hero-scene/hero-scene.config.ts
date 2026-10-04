@@ -62,3 +62,32 @@ export type SceneState = 'idle' | 'on' | 'off';
 export function findFinish(id: FinishId): Finish {
   return FINISHES.find((finish) => finish.id === id) ?? FINISHES[0];
 }
+
+/**
+ * Whether the 3D scene should load at all: a hardware WebGL 2 context can
+ * be created and the visitor has not asked to save data. Checked before the lazy chunk is
+ * requested, so declined visitors never download `three`.
+ */
+export function canRenderScene(): boolean {
+  if (typeof window === 'undefined' || !('WebGL2RenderingContext' in window)) {
+    return false;
+  }
+  const connection = (
+    navigator as Navigator & { connection?: { saveData?: boolean } }
+  ).connection;
+  if (connection?.saveData) return false;
+
+  // The constructor can exist while context creation fails (blocklisted
+  // GPU, WebGL disabled). Probe with the renderer's own requirements, then
+  // release the context straight away.
+  try {
+    const gl = document
+      .createElement('canvas')
+      .getContext('webgl2', { failIfMajorPerformanceCaveat: true });
+    if (!gl) return false;
+    gl.getExtension('WEBGL_lose_context')?.loseContext();
+    return true;
+  } catch {
+    return false;
+  }
+}

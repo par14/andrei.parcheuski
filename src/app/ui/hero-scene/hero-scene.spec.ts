@@ -73,6 +73,14 @@ describe('HeroScene', () => {
   describe('with WebGL 2', () => {
     beforeEach(() => {
       vi.stubGlobal('WebGL2RenderingContext', class {});
+      // canRenderScene() probes for a real context; jsdom has none.
+      vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({
+        getExtension: () => null,
+      } as unknown as RenderingContext);
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
     });
 
     it('stays off when the visitor asked to save data', async () => {
@@ -80,6 +88,13 @@ describe('HeroScene', () => {
         ...navigator,
         connection: { saveData: true },
       });
+      const el = await create();
+      expect(factory).not.toHaveBeenCalled();
+      expect(el.getAttribute('data-state')).toBe('off');
+    });
+
+    it('stays off when no hardware WebGL 2 context can be created', async () => {
+      vi.mocked(HTMLCanvasElement.prototype.getContext).mockReturnValue(null);
       const el = await create();
       expect(factory).not.toHaveBeenCalled();
       expect(el.getAttribute('data-state')).toBe('off');
@@ -125,6 +140,26 @@ describe('HeroScene', () => {
       vi.mocked(runtime.hitTest).mockReturnValue(false);
       canvas.dispatchEvent(new MouseEvent('click', { clientX: 1, clientY: 1 }));
       expect(clicks).toHaveBeenCalledOnce();
+    });
+
+    it('shows the fallback on context loss and rebuilds on restore', async () => {
+      const el = await create();
+      const canvas = el.querySelector('canvas') as HTMLCanvasElement;
+      const first = runtime;
+
+      canvas.dispatchEvent(new Event('webglcontextlost'));
+      fixture.detectChanges();
+      expect(el.getAttribute('data-state')).toBe('off');
+
+      runtime = fakeRuntime();
+      factory.mockImplementation(() => runtime);
+      canvas.dispatchEvent(new Event('webglcontextrestored'));
+      await fixture.whenStable();
+
+      expect(first.dispose).toHaveBeenCalledWith({ loseContext: false });
+      expect(factory).toHaveBeenCalledTimes(2);
+      expect(el.getAttribute('data-state')).toBe('on');
+      expect(runtime.configure).toHaveBeenCalled();
     });
 
     it('releases GPU resources and observers on destroy', async () => {

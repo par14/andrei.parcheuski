@@ -24,7 +24,7 @@
 
   <div class="studio">
     <div class="scene">
-      @defer (on idle) {
+      @defer (when loadScene()) {
         <ngp-hero-scene
           [theme]="theme()"
           [finish]="finish()"
@@ -32,17 +32,22 @@
           (stateChange)="sceneState.set($event)"
           (modelClick)="toggleExploded()"
         />
+      } @error {
+        <ng-container *ngTemplateOutlet="poster" />
       }
       @if (sceneState() === "off") {
+        <ng-container *ngTemplateOutlet="poster" />
+      }
+      <ng-template #poster>
         <img
           class="poster"
           src="stills/stack.webp"
           alt=""
-          width="1200"
-          height="900"
-          loading="lazy"
+          width="1263"
+          height="673"
+          decoding="async"
         />
-      }
+      </ng-template>
     </div>
 
     <div

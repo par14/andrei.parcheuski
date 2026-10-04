@@ -48,6 +48,19 @@ describe('ThemeService', () => {
     expect(service.currentTheme()).toBe('light');
   });
 
+  it('makes the browser UI colour follow the chosen theme', () => {
+    const meta = doc.createElement('meta');
+    meta.name = 'theme-color';
+    meta.media = '(prefers-color-scheme: dark)';
+    meta.content = '#141a21';
+    doc.head.appendChild(meta);
+
+    service.setTheme('light');
+    expect(meta.content).toBe('#eeefea');
+    expect(meta.hasAttribute('media')).toBe(false);
+    meta.remove();
+  });
+
   it('toggles between dark and light', () => {
     service.toggleTheme();
     expect(service.currentTheme()).toBe('light');

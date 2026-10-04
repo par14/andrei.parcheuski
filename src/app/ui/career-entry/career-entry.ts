@@ -31,6 +31,7 @@ import {
     </div>
   `,
   styleUrl: 'career-entry.css',
+  host: { '[class.current]': 'endYear() === undefined' },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CareerEntry {

@@ -55,8 +55,8 @@
   background: var(--color-bg);
 }
 
-/* The current role gets a filled marker. */
-:host(:first-child) .body::before {
+/* An ongoing role (no end year) gets a filled marker. */
+:host(.current) .body::before {
   border-color: var(--color-text);
   background: var(--color-text);
 }

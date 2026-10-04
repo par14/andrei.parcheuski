@@ -33,7 +33,7 @@ import type { Theme } from '../../core/theme.service';
 import { findFinish, SceneConfig } from './hero-scene.config';
 
 export interface HeroRuntimeOptions {
-  /** Snap to targets, no intro, no idle sway, no pointer parallax. */
+  /** Snap to targets: no intro, no pointer parallax, no scroll rotation. */
   reducedMotion: boolean;
 }
 
@@ -48,7 +48,11 @@ export interface HeroRuntime {
   hitTest(x: number, y: number): boolean;
   /** Draws one frame; returns true while anything is still moving. */
   render(time: number): boolean;
-  dispose(): void;
+  /**
+   * Frees GPU resources. `loseContext: false` keeps the WebGL context alive
+   * so a new runtime can reuse the canvas (after a context restore).
+   */
+  dispose(options?: { loseContext?: boolean }): void;
 }
 
 export type HeroRuntimeFactory = (
@@ -118,10 +122,27 @@ export const createHeroRuntime: HeroRuntimeFactory = (canvas, options) => {
   renderer.setClearAlpha(0);
   renderer.toneMapping = NeutralToneMapping;
 
+  // Anything below that throws must not leak the live context.
+  try {
+    return buildScene(renderer, reducedMotion);
+  } catch (error) {
+    renderer.dispose();
+    renderer.forceContextLoss();
+    throw error;
+  }
+};
+
+function buildScene(
+  renderer: WebGLRenderer,
+  reducedMotion: boolean,
+): HeroRuntime {
   const scene = new Scene();
+  const room = new RoomEnvironment();
   const pmrem = new PMREMGenerator(renderer);
-  const envTexture = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-  scene.environment = envTexture;
+  const envTarget = pmrem.fromScene(room, 0.04);
+  room.dispose();
+  pmrem.dispose();
+  scene.environment = envTarget.texture;
 
   const camera = new PerspectiveCamera(28, 1, 0.1, 60);
   // Aimed above the model: the base sits low in frame like a product on a
@@ -272,8 +293,9 @@ export const createHeroRuntime: HeroRuntimeFactory = (canvas, options) => {
     },
 
     setScroll(progress) {
+      // Scroll-linked rotation is motion too: skip it under reduced motion.
+      if (reducedMotion) return;
       target.scroll = clamp01(progress);
-      if (reducedMotion) current.scroll = target.scroll;
     },
 
     hitTest(x, y) {
@@ -351,47 +373,42 @@ export const createHeroRuntime: HeroRuntimeFactory = (canvas, options) => {
         mesh.rotation.y = spec.spin * e;
       });
 
-      // Idle sway keeps the shot alive; pointer and scroll add parallax.
-      const t = time / 1000;
-      const sway = reducedMotion ? 0 : 1;
+      // Pointer and scroll add parallax; the intro settles the model.
       const settle = 1 - intro;
       stand.rotation.y =
         BASE_YAW +
         current.pointerX * 0.16 +
         current.scroll * 0.44 +
-        Math.sin(t * 0.35) * 0.05 * sway +
         settle * 0.3;
-      stand.rotation.x =
-        -current.pointerY * 0.05 +
-        Math.sin(t * 0.27) * 0.012 * sway +
-        settle * 0.14;
+      stand.rotation.x = -current.pointerY * 0.05 + settle * 0.14;
       stand.position.y = settle * 0.18;
 
       placeCamera();
       renderer.render(scene, camera);
 
-      // Without reduced motion the idle sway runs while the hero is visible.
-      return moving || !reducedMotion;
+      // Once every value has converged the caller stops the frame loop;
+      // the next pointer, scroll or config change starts it again.
+      return moving;
     },
 
-    dispose() {
+    dispose({ loseContext = true } = {}) {
       slabs.forEach((mesh) => mesh.geometry.dispose());
       materials.forEach((material) => material.dispose());
       shadowGeometry.dispose();
       shadowMaterial.dispose();
       shadowTexture.dispose();
-      envTexture.dispose();
-      pmrem.dispose();
+      envTarget.dispose();
       renderer.dispose();
-      renderer.forceContextLoss();
+      if (loseContext) renderer.forceContextLoss();
     },
   };
-};
+}
 
 /**
  * A blurred rounded rectangle. Drawn via shadowBlur (an off-canvas shape
- * casting its shadow into view), which works in every canvas-2D engine,
- * unlike ctx.filter.
+ * casting its shadow into view) and a hand-built path: ctx.filter and
+ * ctx.roundRect are missing in Safari 15 / Firefox < 112, which do have
+ * WebGL 2.
  */
 function createShadowTexture(): CanvasTexture {
   const canvas = document.createElement('canvas');
@@ -404,10 +421,26 @@ function createShadowTexture(): CanvasTexture {
     ctx.shadowBlur = 26;
     ctx.shadowOffsetX = offset;
     ctx.fillStyle = '#000';
-    ctx.beginPath();
     // 160×108 px on a 256×192 texture ≈ the 2.5×1.7 base on a 4×3 plane
-    ctx.roundRect(48 - offset, 42, 160, 108, 14);
+    roundedRectPath(ctx, 48 - offset, 42, 160, 108, 14);
     ctx.fill();
   }
   return new CanvasTexture(canvas);
+}
+
+function roundedRectPath(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: number,
+): void {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
 }
