@@ -39,8 +39,9 @@ export class Hero {
   // span never shows a stale year from an old build.
   protected readonly currentYear = signal(new Date().getFullYear());
 
-  protected readonly finish = signal<FinishId>('ultramarine');
-  protected readonly exploded = signal(false);
+  protected readonly finish = signal<FinishId>('navy');
+  /** Each press of the rotate button turns the product a step. */
+  protected readonly turns = signal(0);
   protected readonly sceneState = signal<SceneState>('idle');
   protected readonly currentFinish = computed(() => findFinish(this.finish()));
   /** Flips once the browser is idle; triggers the deferred 3D chunk. */
@@ -67,9 +68,5 @@ export class Hero {
         this.#destroyRef.onDestroy(() => clearTimeout(id));
       }
     });
-  }
-
-  protected toggleExploded(): void {
-    this.exploded.update((exploded) => !exploded);
   }
 }

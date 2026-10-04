@@ -84,7 +84,7 @@ describe('Layout (smoke)', () => {
 
   it('renders the 3D configurator controls without loading the scene', () => {
     const swatches = el.querySelectorAll('.configurator .swatch');
-    expect(swatches.length).toBe(3);
+    expect(swatches.length).toBe(5);
     expect(swatches[0].getAttribute('aria-pressed')).toBe('true');
     expect(el.querySelector('ngp-hero-scene')).toBeNull();
     // jsdom has no WebGL 2: the still is shown and `three` is never requested.

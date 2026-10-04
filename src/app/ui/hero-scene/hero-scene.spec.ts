@@ -5,13 +5,14 @@ import { HERO_RUNTIME_FACTORY, HeroScene } from './hero-scene';
 import { HeroRuntime } from './hero-scene.runtime';
 
 /** jsdom has no WebGL: the real runtime is replaced with a recording fake. */
-function fakeRuntime(): HeroRuntime {
+function fakeRuntime(ready: Promise<void> = Promise.resolve()): HeroRuntime {
   return {
+    ready,
     resize: vi.fn(),
     configure: vi.fn(),
     setPointer: vi.fn(),
     setScroll: vi.fn(),
-    hitTest: vi.fn(() => true),
+    rotateBy: vi.fn(),
     render: vi.fn(() => false),
     dispose: vi.fn(),
   };
@@ -37,10 +38,16 @@ describe('HeroScene', () => {
     });
     fixture = TestBed.createComponent(HeroScene);
     fixture.componentRef.setInput('theme', 'dark');
-    fixture.componentRef.setInput('finish', 'ultramarine');
+    fixture.componentRef.setInput('finish', 'navy');
     fixture.detectChanges();
-    await fixture.whenStable();
+    await flush();
     return fixture.nativeElement as HTMLElement;
+  }
+
+  /** Lets `runtime.ready` callbacks run, then renders. */
+  async function flush(): Promise<void> {
+    await new Promise((resolve) => setTimeout(resolve));
+    await fixture.whenStable();
   }
 
   beforeEach(() => {
@@ -110,36 +117,51 @@ describe('HeroScene', () => {
 
     it('builds the scene and forwards inputs as scene config', async () => {
       const el = await create();
+      expect(factory).toHaveBeenCalledWith(expect.any(HTMLCanvasElement), {
+        modelUrl: 'models/sofa.glb',
+        reducedMotion: false,
+      });
       expect(el.getAttribute('data-state')).toBe('on');
       expect(runtime.configure).toHaveBeenLastCalledWith({
         theme: 'dark',
-        finish: 'ultramarine',
-        exploded: false,
+        finish: 'navy',
       });
 
-      fixture.componentRef.setInput('finish', 'amber');
-      fixture.componentRef.setInput('exploded', true);
+      fixture.componentRef.setInput('finish', 'champagne');
       fixture.componentRef.setInput('theme', 'light');
       await fixture.whenStable();
       expect(runtime.configure).toHaveBeenLastCalledWith({
         theme: 'light',
-        finish: 'amber',
-        exploded: true,
+        finish: 'champagne',
       });
     });
 
-    it('emits modelClick only when the click hits the model', async () => {
+    it('stays idle until the model loads, then turns on', async () => {
+      let resolve!: () => void;
+      runtime = fakeRuntime(new Promise<void>((r) => (resolve = r)));
+      factory.mockImplementation(() => runtime);
       const el = await create();
-      const clicks = vi.fn();
-      fixture.componentInstance.modelClick.subscribe(clicks);
-      const canvas = el.querySelector('canvas') as HTMLCanvasElement;
+      expect(el.getAttribute('data-state')).toBe('idle');
 
-      canvas.dispatchEvent(new MouseEvent('click', { clientX: 1, clientY: 1 }));
-      expect(clicks).toHaveBeenCalledOnce();
+      resolve();
+      await flush();
+      expect(el.getAttribute('data-state')).toBe('on');
+    });
 
-      vi.mocked(runtime.hitTest).mockReturnValue(false);
-      canvas.dispatchEvent(new MouseEvent('click', { clientX: 1, clientY: 1 }));
-      expect(clicks).toHaveBeenCalledOnce();
+    it('falls back when the model fails to load', async () => {
+      runtime = fakeRuntime(Promise.reject(new Error('404')));
+      factory.mockImplementation(() => runtime);
+      const el = await create();
+      await fixture.whenStable();
+      expect(el.getAttribute('data-state')).toBe('off');
+      expect(runtime.dispose).toHaveBeenCalled();
+    });
+
+    it('turns the product one step per rotate press', async () => {
+      await create();
+      fixture.componentRef.setInput('turns', 2);
+      await fixture.whenStable();
+      expect(runtime.rotateBy).toHaveBeenCalledWith((2 * Math.PI) / 3);
     });
 
     it('shows the fallback on context loss and rebuilds on restore', async () => {

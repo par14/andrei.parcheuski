@@ -1,6 +1,6 @@
 // Renders still images of the hero model from the built site:
-//   public/stills/stack.webp          poster when WebGL is unavailable
-//   public/stills/stack-feature.webp  featured project card
+//   public/stills/sofa.webp          poster when WebGL is unavailable
+//   public/stills/sofa-feature.webp  featured project card
 //   public/og-image.png              social preview (1200×630)
 // Usage: ng build && node scripts/render-stills.mjs   (needs `cwebp`)
 import { execFileSync, spawn } from "node:child_process";
@@ -11,15 +11,11 @@ const PORT = 4174;
 const ORIGIN = `http://localhost:${PORT}`;
 
 const STILLS = [
+  { file: "public/stills/sofa.webp", finish: "Navy velvet", turns: 0 },
   {
-    file: "public/stills/stack.webp",
-    finish: "Ultramarine gloss",
-    exploded: false,
-  },
-  {
-    file: "public/stills/stack-feature.webp",
-    finish: "Amber anodised",
-    exploded: true,
+    file: "public/stills/sofa-feature.webp",
+    finish: "Champagne velvet",
+    turns: 1,
   },
 ];
 
@@ -73,7 +69,7 @@ async function trim(page, png, padding = 0.06) {
   return Buffer.from(dataUrl.split(",")[1], "base64");
 }
 
-async function renderStill(browser, { finish, exploded }) {
+async function renderStill(browser, { finish, turns }) {
   const context = await browser.newContext({
     viewport: { width: 1440, height: 900 },
     deviceScaleFactor: 2,
@@ -86,10 +82,12 @@ async function renderStill(browser, { finish, exploded }) {
   await page.goto(ORIGIN, { waitUntil: "networkidle" });
   await page.waitForSelector('ngp-hero-scene[data-state="on"]');
   await page.getByRole("button", { name: finish }).click();
-  if (exploded) await page.getByRole("button", { name: "Explode" }).click();
+  for (let i = 0; i < turns; i++) {
+    await page.getByRole("button", { name: "Rotate the sofa" }).click();
+  }
   await page.addStyleTag({
     content: `html, body, .stage { background: transparent !important; }
-      .configurator { display: none !important; }`,
+      .configurator, .caption { display: none !important; }`,
   });
   await page.waitForTimeout(500);
   const png = await page

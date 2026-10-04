@@ -8,9 +8,11 @@ Personal portfolio of **Andrei Parcheuski** — Senior Angular Developer (3D / W
 
 - **Angular 22** — zoneless, standalone components, signals, OnPush everywhere
 - **SSR + prerender** via `@angular/ssr` (static output, deployed on Vercel)
-- **WebGL hero** — a configurable three.js product shot (finish swatches,
-  exploded view) loaded via `@defer (on idle)`, so `three` ships in a lazy
-  chunk; falls back to a still image without WebGL or with Save-Data
+- **WebGL hero** — a live 3D product configurator: a glTF velvet sofa with
+  five fabric options (`KHR_materials_variants`, eased between), drag or
+  button to rotate. `three` ships in a lazy chunk that is requested only
+  when a hardware WebGL 2 context exists and Save-Data is off; otherwise a
+  still image is shown
 - **CSS-first motion** — scroll-driven progress bar and section reveals,
   one orchestrated hero entrance, circular View Transition on theme toggle,
   `prefers-reduced-motion` respected globally (the 3D scene renders a static
@@ -20,7 +22,8 @@ Personal portfolio of **Andrei Parcheuski** — Senior Angular Developer (3D / W
 ## Highlights worth reading
 
 - `src/app/ui/hero-scene/hero-scene.runtime.ts` — the studio scene: plain
-  three.js, frame-rate independent easing, disposes everything it creates
+  three.js, glTF variants as eased material properties, real shadows plus a
+  contact blob, disposes everything it creates
 - `src/app/ui/hero-scene/hero-scene.ts` — zoneless rAF loop that pauses when
   the tab is hidden or the hero is off-screen; WebGL feature detection
 - `src/app/ui/count-up/count-up.ts` — zoneless-safe count-up directive
@@ -55,3 +58,11 @@ Content lives in `src/app/core/portfolio.data.ts`; the downloadable CV is
 python3 -m pip install -r scripts/requirements.txt
 python3 scripts/generate_cv.py
 ```
+
+## Credits
+
+3D model: [Glam Velvet Sofa](https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/GlamVelvetSofa)
+by Wayfair, [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), from
+the Khronos glTF Sample Assets. `public/models/sofa.glb` is an optimised copy
+(WebP textures at 512px, quantized geometry; 3.15 MB → 203 KB) made with
+`@gltf-transform/cli`.

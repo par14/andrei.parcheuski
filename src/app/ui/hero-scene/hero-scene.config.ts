@@ -5,55 +5,61 @@
  */
 import type { Theme } from '../../core/theme.service';
 
-export type FinishId = 'ultramarine' | 'amber' | 'graphite';
+export type FinishId = 'navy' | 'champagne' | 'palepink' | 'gray' | 'black';
 
 export interface Finish {
   id: FinishId;
-  /** Human-readable material name, announced when it changes. */
+  /** Human-readable fabric name, announced when it changes. */
   label: string;
-  /** Swatch colour shown on the button. */
+  /** Swatch colour shown on the button (perceived velvet colour). */
   swatch: string;
-  /** Physical material of the top slab. */
-  color: string;
-  metalness: number;
-  roughness: number;
-  clearcoat: number;
+  /** glTF material name of this KHR_materials_variants option. */
+  material: string;
 }
 
+/** Fabric options of the Glam Velvet Sofa model (KHR_materials_variants). */
 export const FINISHES: readonly Finish[] = [
   {
-    id: 'ultramarine',
-    label: 'Ultramarine gloss',
-    swatch: '#4f6df0',
-    color: '#3d5ce6',
-    metalness: 0,
-    roughness: 0.34,
-    clearcoat: 1,
+    id: 'navy',
+    label: 'Navy velvet',
+    swatch: '#2b3f70',
+    material: 'GlamVelvetSofa_fabric_navy',
   },
   {
-    id: 'amber',
-    label: 'Amber anodised',
-    swatch: '#e08a2e',
-    color: '#e8952f',
-    metalness: 0.4,
-    roughness: 0.3,
-    clearcoat: 0.5,
+    id: 'champagne',
+    label: 'Champagne velvet',
+    swatch: '#a8917a',
+    material: 'GlamVelvetSofa_fabric_champagne',
   },
   {
-    id: 'graphite',
-    label: 'Graphite metal',
-    swatch: '#8c949e',
-    color: '#6b737d',
-    metalness: 0.9,
-    roughness: 0.36,
-    clearcoat: 0,
+    id: 'palepink',
+    label: 'Pale pink velvet',
+    swatch: '#e6c6c7',
+    material: 'GlamVelvetSofa_fabric_palepink',
+  },
+  {
+    id: 'gray',
+    label: 'Gray velvet',
+    swatch: '#a3a49f',
+    material: 'GlamVelvetSofa_fabric_gray',
+  },
+  {
+    id: 'black',
+    label: 'Black velvet',
+    swatch: '#2b2b2e',
+    material: 'GlamVelvetSofa_fabric_black',
   },
 ];
+
+/**
+ * "Glam Velvet Sofa" by Wayfair LLC, from the Khronos glTF Sample Assets,
+ * CC BY 4.0. Optimised copy: WebP textures (512px), quantized geometry.
+ */
+export const MODEL_URL = 'models/sofa.glb';
 
 export interface SceneConfig {
   theme: Theme;
   finish: FinishId;
-  exploded: boolean;
 }
 
 /** idle: not started yet · on: rendering · off: unsupported or failed. */

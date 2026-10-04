@@ -28,9 +28,8 @@
         <ngp-hero-scene
           [theme]="theme()"
           [finish]="finish()"
-          [exploded]="exploded()"
+          [turns]="turns()"
           (stateChange)="sceneState.set($event)"
-          (modelClick)="toggleExploded()"
         />
       } @error {
         <ng-container *ngTemplateOutlet="poster" />
@@ -41,10 +40,10 @@
       <ng-template #poster>
         <img
           class="poster"
-          src="stills/stack.webp"
+          src="stills/sofa.webp"
           alt=""
-          width="1263"
-          height="673"
+          width="1156"
+          height="586"
           decoding="async"
         />
       </ng-template>
@@ -53,7 +52,7 @@
     <div
       class="configurator"
       role="group"
-      aria-label="Configure the 3D model"
+      aria-label="Configure the 3D sofa"
       [class.is-ready]="sceneState() === 'on'"
     >
       <div class="swatches">
@@ -71,9 +70,30 @@
       <span class="finish-name" aria-live="polite">{{
         currentFinish().label
       }}</span>
-      <button type="button" class="explode" (click)="toggleExploded()">
-        {{ exploded() ? "Assemble" : "Explode" }}
+      <button
+        type="button"
+        class="rotate"
+        aria-label="Rotate the sofa"
+        (click)="turns.set(turns() + 1)"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          width="18"
+          height="18"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M20 12a8 8 0 1 1-2.34-5.66" />
+          <path d="M20 4v4.5h-4.5" />
+        </svg>
       </button>
     </div>
+    <p class="caption" [class.is-ready]="sceneState() === 'on'">
+      Live 3D configurator. Drag to rotate.
+    </p>
   </div>
 </div>

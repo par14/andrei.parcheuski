@@ -29,6 +29,22 @@ import {
           <li><a href="/cv.pdf" download>Download CV</a></li>
         </ul>
       </div>
+      <p class="credit">
+        3D model:
+        <a
+          href="https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/GlamVelvetSofa"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Glam Velvet Sofa</a
+        >
+        by Wayfair,
+        <a
+          href="https://creativecommons.org/licenses/by/4.0/"
+          target="_blank"
+          rel="noopener noreferrer"
+          >CC BY 4.0</a
+        >
+      </p>
     </footer>
   `,
   styleUrl: './footer.css',

@@ -1,10 +1,11 @@
 /**
- * The hero "studio" scene: three stacked slabs on a soft contact shadow,
- * lit by an environment map, a key light and an amber rim light.
+ * The hero "studio" scene: a velvet sofa (a real e-commerce glTF asset with
+ * KHR_materials_variants fabric options) on a soft studio floor, lit by an
+ * environment map, a key light and an amber rim light.
  *
  * Plain three.js with no Angular imports, so it can be swapped for a fake
  * in unit tests (see HERO_RUNTIME_FACTORY). Everything that moves is a
- * frame-rate independent lerp towards a target; `render()` reports whether
+ * frame-rate independent ease towards a target; `render()` reports whether
  * anything is still moving so the caller can stop the frame loop.
  */
 import {
@@ -12,40 +13,47 @@ import {
   Color,
   DirectionalLight,
   Group,
+  Light,
+  Material,
   Mesh,
   MeshBasicMaterial,
   MeshPhysicalMaterial,
-  MeshStandardMaterial,
   NeutralToneMapping,
+  Object3D,
+  PCFSoftShadowMap,
   PerspectiveCamera,
   PlaneGeometry,
   PMREMGenerator,
-  Raycaster,
   Scene,
-  Vector2,
+  ShadowMaterial,
+  Texture,
   Vector3,
   WebGLRenderer,
 } from 'three';
-import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 import type { Theme } from '../../core/theme.service';
-import { findFinish, SceneConfig } from './hero-scene.config';
+import { FINISHES, findFinish, SceneConfig } from './hero-scene.config';
 
 export interface HeroRuntimeOptions {
+  /** URL of the glTF model to load. */
+  modelUrl: string;
   /** Snap to targets: no intro, no pointer parallax, no scroll rotation. */
   reducedMotion: boolean;
 }
 
 export interface HeroRuntime {
+  /** Resolves once the model is loaded and placed; rejects on failure. */
+  readonly ready: Promise<void>;
   resize(width: number, height: number, pixelRatio: number): void;
   configure(config: SceneConfig): void;
   /** Pointer position in normalised device coordinates (-1..1). */
   setPointer(x: number, y: number): void;
   /** Hero scroll progress, 0 (top) to 1 (hero scrolled away). */
   setScroll(progress: number): void;
-  /** True when the NDC point hits the model. */
-  hitTest(x: number, y: number): boolean;
+  /** Turns the product around its vertical axis (radians, eased). */
+  rotateBy(radians: number): void;
   /** Draws one frame; returns true while anything is still moving. */
   render(time: number): boolean;
   /**
@@ -64,54 +72,54 @@ export type HeroRuntimeFactory = (
 const LOOKS: Record<
   Theme,
   {
-    base: string;
-    chassis: string;
     key: number;
     rim: number;
     rimColor: string;
     env: number;
     shadow: number;
+    contact: number;
   }
 > = {
   dark: {
-    base: '#36404c',
-    chassis: '#c9ced6',
-    key: 1.6,
-    rim: 2.4,
+    key: 2.6,
+    rim: 3.2,
     rimColor: '#ffb154',
-    env: 0.5,
-    shadow: 0.7,
+    env: 0.55,
+    shadow: 0.45,
+    contact: 0.75,
   },
   light: {
-    base: '#d5d8d2',
-    chassis: '#b9bec6',
-    key: 1.9,
-    rim: 1.3,
+    key: 2.4,
+    rim: 1.6,
     rimColor: '#ff9a2e',
-    env: 0.6,
-    shadow: 0.36,
+    env: 0.8,
+    shadow: 0.22,
+    contact: 0.45,
   },
 };
 
-/** Bottom → top: matte base, brushed chassis, configurable top shell. */
-const SLABS = [
-  { w: 2.5, h: 0.24, d: 1.7, y: 0.12, lift: 0, x: 0, spin: 0 },
-  { w: 2.3, h: 0.08, d: 1.56, y: 0.32, lift: 0.4, x: 0.05, spin: 0.07 },
-  { w: 2.16, h: 0.34, d: 1.44, y: 0.57, lift: 0.86, x: 0.14, spin: -0.1 },
-] as const;
+/** Fabric properties eased between variants. */
+interface Fabric {
+  color: Color;
+  sheenColor: Color;
+  specularColor: Color;
+  roughness: number;
+  sheenRoughness: number;
+  specularIntensity: number;
+}
 
-const BASE_YAW = -0.58;
-const CAMERA_ELEVATION = 0.3; // radians, ~17°
+const MODEL_WIDTH = 3.2; // world units after normalising the model
+const BASE_YAW = -0.5;
+const CAMERA_ELEVATION = 0.26; // radians, ~15°
+const CAMERA_TARGET_Y = 0.85;
 const INTRO_MS = 1100;
 
 const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
 const clamp01 = (t: number) => Math.min(Math.max(t, 0), 1);
 
 export const createHeroRuntime: HeroRuntimeFactory = (canvas, options) => {
-  const { reducedMotion } = options;
-
   // Throws when WebGL is unavailable or software-rendered (blocklisted GPU):
-  // the caller treats that as "off" and keeps the CSS-only hero.
+  // the caller treats that as "off" and keeps the still image.
   const renderer = new WebGLRenderer({
     canvas,
     antialias: true,
@@ -121,10 +129,12 @@ export const createHeroRuntime: HeroRuntimeFactory = (canvas, options) => {
   });
   renderer.setClearAlpha(0);
   renderer.toneMapping = NeutralToneMapping;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = PCFSoftShadowMap;
 
   // Anything below that throws must not leak the live context.
   try {
-    return buildScene(renderer, reducedMotion);
+    return buildScene(renderer, options);
   } catch (error) {
     renderer.dispose();
     renderer.forceContextLoss();
@@ -134,7 +144,7 @@ export const createHeroRuntime: HeroRuntimeFactory = (canvas, options) => {
 
 function buildScene(
   renderer: WebGLRenderer,
-  reducedMotion: boolean,
+  { modelUrl, reducedMotion }: HeroRuntimeOptions,
 ): HeroRuntime {
   const scene = new Scene();
   const room = new RoomEnvironment();
@@ -144,90 +154,189 @@ function buildScene(
   pmrem.dispose();
   scene.environment = envTarget.texture;
 
-  const camera = new PerspectiveCamera(28, 1, 0.1, 60);
-  // Aimed above the model: the base sits low in frame like a product on a
-  // studio floor, and the exploded layers rise into the free space above.
-  const cameraTarget = new Vector3(0, 1.15, 0);
-  let cameraDistance = 8;
+  const camera = new PerspectiveCamera(26, 1, 0.1, 80);
+  const cameraTarget = new Vector3(0, CAMERA_TARGET_Y, 0);
+  let cameraDistance = 9;
 
-  // ----- Model -----
-  const model = new Group();
-  const stand = new Group(); // receives pointer/scroll/intro rotation
-  stand.add(model);
+  // ----- Stage -----
+  const stand = new Group(); // receives intro / pointer / drag / scroll yaw
   scene.add(stand);
 
-  const baseMaterial = new MeshStandardMaterial({ roughness: 0.9 });
-  const chassisMaterial = new MeshStandardMaterial({
-    metalness: 1,
-    roughness: 0.32,
-  });
-  const shellMaterial = new MeshPhysicalMaterial({ clearcoatRoughness: 0.15 });
-  const materials = [baseMaterial, chassisMaterial, shellMaterial];
+  // Real shadow from the key light (legs, arms) on an invisible floor...
+  const floorGeometry = new PlaneGeometry(12, 12);
+  const floorMaterial = new ShadowMaterial({ opacity: 0 });
+  const floor = new Mesh(floorGeometry, floorMaterial);
+  floor.rotation.x = -Math.PI / 2;
+  floor.receiveShadow = true;
+  scene.add(floor);
 
-  const slabs = SLABS.map((spec, i) => {
-    const geometry = new RoundedBoxGeometry(spec.w, spec.h, spec.d, 4, 0.06);
-    const mesh = new Mesh(geometry, materials[i]);
-    mesh.position.y = spec.y;
-    model.add(mesh);
-    return mesh;
-  });
-
-  // Soft contact shadow: a blurred rounded rectangle under the base.
-  const shadowTexture = createShadowTexture();
-  const shadowMaterial = new MeshBasicMaterial({
-    map: shadowTexture,
+  // ...plus a soft contact blob that grounds the model.
+  const contactTexture = createContactTexture();
+  const contactMaterial = new MeshBasicMaterial({
+    map: contactTexture,
     transparent: true,
     depthWrite: false,
+    opacity: 0,
   });
-  const shadowGeometry = new PlaneGeometry(4, 3);
-  const shadow = new Mesh(shadowGeometry, shadowMaterial);
-  shadow.rotation.x = -Math.PI / 2;
-  shadow.position.y = 0.002;
-  model.add(shadow);
+  const contactGeometry = new PlaneGeometry(1, 1);
+  const contact = new Mesh(contactGeometry, contactMaterial);
+  contact.rotation.x = -Math.PI / 2;
+  contact.position.y = 0.003;
+  stand.add(contact);
 
-  // ----- Lights -----
   const key = new DirectionalLight('#ffffff', 0);
-  key.position.set(-3, 5, 4);
+  key.position.set(-3.5, 6, 4.5);
+  key.castShadow = true;
+  // Shadow frustum must cover the floor shadow at any turn of the model,
+  // or the shadow is cut by a straight edge.
+  key.shadow.mapSize.set(2048, 2048);
+  key.shadow.camera.left = -5;
+  key.shadow.camera.right = 5;
+  key.shadow.camera.top = 5;
+  key.shadow.camera.bottom = -5;
+  key.shadow.camera.near = 1;
+  key.shadow.camera.far = 20;
+  key.shadow.bias = -0.0005;
+  key.shadow.normalBias = 0.02;
   const rim = new DirectionalLight('#ffb154', 0);
-  rim.position.set(3.5, 1.6, -4);
+  rim.position.set(4, 2.2, -4.5);
   scene.add(key, rim);
 
   // ----- Animated state: current values chase targets -----
+  const newFabric = (): Fabric => ({
+    color: new Color(),
+    sheenColor: new Color(),
+    specularColor: new Color(1, 1, 1),
+    roughness: 0.7,
+    sheenRoughness: 0.6,
+    specularIntensity: 1,
+  });
   const target = {
-    shell: new Color(),
-    metalness: 0,
-    roughness: 0.3,
-    clearcoat: 1,
-    base: new Color(),
-    chassis: new Color(),
+    fabric: newFabric(),
     rimColor: new Color(),
     key: 0,
     rim: 0,
     env: 0,
     shadow: 0,
-    explode: 0,
+    contact: 0,
     pointerX: 0,
     pointerY: 0,
     scroll: 0,
+    yaw: 0,
   };
   const current = {
     ...target,
-    shell: new Color(),
-    base: new Color(),
-    chassis: new Color(),
+    fabric: newFabric(),
     rimColor: new Color(),
   };
+  let lastConfig: SceneConfig | null = null;
   let configured = false;
   let startTime = -1;
   let lastTime = -1;
 
-  const raycaster = new Raycaster();
-  const ndc = new Vector2();
+  // ----- Model (async) -----
+  const fabricMaterials = new Map<string, MeshPhysicalMaterial>();
+  const ownedMaterials = new Set<Material>();
+  const ownedMeshes: Mesh[] = [];
+  let liveFabric: MeshPhysicalMaterial | null = null;
+  let loaded = false;
+  let disposed = false;
+
+  /** Copies the chosen variant's fabric into `into`; false until loaded. */
+  function readFabric(config: SceneConfig, into: Fabric): boolean {
+    const source = fabricMaterials.get(findFinish(config.finish).material);
+    if (!source) return false;
+    into.color.copy(source.color);
+    into.sheenColor.copy(source.sheenColor);
+    into.specularColor.copy(source.specularColor);
+    into.roughness = source.roughness;
+    into.sheenRoughness = source.sheenRoughness;
+    into.specularIntensity = source.specularIntensity;
+    return true;
+  }
+
+  function applyFabric(value: Fabric): void {
+    if (!liveFabric) return;
+    liveFabric.color.copy(value.color);
+    liveFabric.sheenColor.copy(value.sheenColor);
+    liveFabric.specularColor.copy(value.specularColor);
+    liveFabric.roughness = value.roughness;
+    liveFabric.sheenRoughness = value.sheenRoughness;
+    liveFabric.specularIntensity = value.specularIntensity;
+  }
+
+  const ready = new GLTFLoader().loadAsync(modelUrl).then(async (gltf) => {
+    if (disposed) return;
+
+    // The asset ships its own key light; the studio lights replace it.
+    const embeddedLights: Object3D[] = [];
+    const found: { fabric?: Mesh } = {};
+    gltf.scene.traverse((object) => {
+      if ((object as Light).isLight) embeddedLights.push(object);
+      const mesh = object as Mesh;
+      if (mesh.isMesh) {
+        mesh.castShadow = true;
+        ownedMeshes.push(mesh);
+        ownedMaterials.add(mesh.material as Material);
+        if (mesh.name.includes('fabric')) found.fabric = mesh;
+      }
+    });
+    embeddedLights.forEach((light) => light.removeFromParent());
+
+    // Every fabric option of KHR_materials_variants, as a material.
+    const json = gltf.parser.json as { materials?: { name?: string }[] };
+    await Promise.all(
+      (json.materials ?? []).map(async (definition, index) => {
+        const name = definition.name ?? '';
+        if (!FINISHES.some((finish) => finish.material === name)) return;
+        const material = (await gltf.parser.getDependency(
+          'material',
+          index,
+        )) as MeshPhysicalMaterial;
+        fabricMaterials.set(name, material);
+        ownedMaterials.add(material);
+      }),
+    );
+    if (disposed) return;
+    const fabricMesh = found.fabric;
+    if (!fabricMesh || fabricMaterials.size === 0) {
+      throw new Error('The model has no fabric variants');
+    }
+
+    // One live material whose properties ease between the variants.
+    liveFabric = (fabricMesh.material as MeshPhysicalMaterial).clone();
+    ownedMaterials.add(liveFabric);
+    fabricMesh.material = liveFabric;
+
+    // Normalise: fixed width, centred, standing on the floor.
+    gltf.scene.updateMatrixWorld(true);
+    const box = boundsOf(gltf.scene);
+    const scale = MODEL_WIDTH / (box.max.x - box.min.x);
+    gltf.scene.scale.setScalar(scale);
+    gltf.scene.position.set(
+      -((box.min.x + box.max.x) / 2) * scale,
+      -box.min.y * scale,
+      -((box.min.z + box.max.z) / 2) * scale,
+    );
+    contact.scale.set(
+      (box.max.x - box.min.x) * scale * 1.2,
+      (box.max.z - box.min.z) * scale * 1.5,
+      1,
+    );
+    stand.add(gltf.scene);
+
+    // Show the configured fabric straight away (no ease from black).
+    if (lastConfig && readFabric(lastConfig, target.fabric)) {
+      copyFabric(target.fabric, current.fabric);
+    }
+    applyFabric(current.fabric);
+    loaded = true;
+  });
 
   function fitCamera(aspect: number): void {
     camera.aspect = aspect;
-    // Narrow viewports pull the camera back so the exploded stack still fits.
-    cameraDistance = Math.max(7.4, 8.2 / Math.min(aspect, 1.35));
+    // Wide model: fit its width on narrow canvases, keep a floor on wide.
+    cameraDistance = Math.max(6.6, 10.4 / Math.min(aspect, 1.6));
     camera.updateProjectionMatrix();
   }
 
@@ -243,6 +352,8 @@ function buildScene(
   fitCamera(1);
 
   return {
+    ready,
+
     resize(width, height, pixelRatio) {
       if (!width || !height) return;
       renderer.setPixelRatio(pixelRatio);
@@ -251,37 +362,25 @@ function buildScene(
     },
 
     configure(config) {
+      lastConfig = config;
       const look = LOOKS[config.theme];
-      const finish = findFinish(config.finish);
-      target.shell.set(finish.color);
-      target.metalness = finish.metalness;
-      target.roughness = finish.roughness;
-      target.clearcoat = finish.clearcoat;
-      target.base.set(look.base);
-      target.chassis.set(look.chassis);
+      readFabric(config, target.fabric);
       target.rimColor.set(look.rimColor);
       target.key = look.key;
       target.rim = look.rim;
       target.env = look.env;
       target.shadow = look.shadow;
-      target.explode = config.exploded ? 1 : 0;
+      target.contact = look.contact;
 
       // First configuration (and reduced motion) snaps instead of easing.
       if (!configured || reducedMotion) {
-        current.shell.copy(target.shell);
-        current.base.copy(target.base);
-        current.chassis.copy(target.chassis);
+        copyFabric(target.fabric, current.fabric);
         current.rimColor.copy(target.rimColor);
-        Object.assign(current, {
-          metalness: target.metalness,
-          roughness: target.roughness,
-          clearcoat: target.clearcoat,
-          key: target.key,
-          rim: target.rim,
-          env: target.env,
-          shadow: target.shadow,
-          explode: target.explode,
-        });
+        current.key = target.key;
+        current.rim = target.rim;
+        current.env = target.env;
+        current.shadow = target.shadow;
+        current.contact = target.contact;
         configured = true;
       }
     },
@@ -298,13 +397,13 @@ function buildScene(
       target.scroll = clamp01(progress);
     },
 
-    hitTest(x, y) {
-      ndc.set(x, y);
-      raycaster.setFromCamera(ndc, camera);
-      return raycaster.intersectObjects(slabs, false).length > 0;
+    rotateBy(radians) {
+      target.yaw += radians;
     },
 
     render(time) {
+      // Nothing to show until the model is in; the intro starts with it.
+      if (!loaded) return false;
       if (startTime < 0) startTime = time;
       const dt = lastTime < 0 ? 16 : Math.min(time - lastTime, 64);
       lastTime = time;
@@ -323,28 +422,31 @@ function buildScene(
           Math.abs(from.r - to.r) +
             Math.abs(from.g - to.g) +
             Math.abs(from.b - to.b) >
-          3e-3
+          2e-3
         ) {
           moving = true;
         }
       };
 
-      // Materials and lights
-      approachColor(current.shell, target.shell);
-      approachColor(current.base, target.base);
-      approachColor(current.chassis, target.chassis);
+      // Fabric variant and studio lights
+      const f = current.fabric;
+      const t = target.fabric;
+      approachColor(f.color, t.color);
+      approachColor(f.sheenColor, t.sheenColor);
+      approachColor(f.specularColor, t.specularColor);
+      f.roughness = approach(f.roughness, t.roughness);
+      f.sheenRoughness = approach(f.sheenRoughness, t.sheenRoughness);
+      f.specularIntensity = approach(f.specularIntensity, t.specularIntensity);
       approachColor(current.rimColor, target.rimColor);
-      current.metalness = approach(current.metalness, target.metalness);
-      current.roughness = approach(current.roughness, target.roughness);
-      current.clearcoat = approach(current.clearcoat, target.clearcoat);
       current.key = approach(current.key, target.key);
       current.rim = approach(current.rim, target.rim);
       current.env = approach(current.env, target.env);
       current.shadow = approach(current.shadow, target.shadow);
-      current.explode = approach(current.explode, target.explode, kSlow);
+      current.contact = approach(current.contact, target.contact);
       current.pointerX = approach(current.pointerX, target.pointerX, kSlow);
       current.pointerY = approach(current.pointerY, target.pointerY, kSlow);
       current.scroll = approach(current.scroll, target.scroll);
+      current.yaw = approach(current.yaw, target.yaw, kSlow);
 
       // Intro: the studio lights come up and the model settles.
       const intro = reducedMotion
@@ -352,51 +454,50 @@ function buildScene(
         : easeOutCubic(clamp01((time - startTime) / INTRO_MS));
       if (intro < 1) moving = true;
 
-      shellMaterial.color.copy(current.shell);
-      shellMaterial.metalness = current.metalness;
-      shellMaterial.roughness = current.roughness;
-      shellMaterial.clearcoat = current.clearcoat;
-      baseMaterial.color.copy(current.base);
-      chassisMaterial.color.copy(current.chassis);
+      applyFabric(f);
       rim.color.copy(current.rimColor);
       key.intensity = current.key * intro;
       rim.intensity = current.rim * intro;
       scene.environmentIntensity = current.env * (0.15 + 0.85 * intro);
-      shadowMaterial.opacity = current.shadow * intro;
+      floorMaterial.opacity = current.shadow * intro;
+      contactMaterial.opacity = current.contact * intro;
 
-      // Exploded view: slabs lift, drift and fan out slightly.
-      const e = easeOutCubic(current.explode);
-      slabs.forEach((mesh, i) => {
-        const spec = SLABS[i];
-        mesh.position.y = spec.y + spec.lift * e;
-        mesh.position.x = spec.x * e;
-        mesh.rotation.y = spec.spin * e;
-      });
-
-      // Pointer and scroll add parallax; the intro settles the model.
       const settle = 1 - intro;
       stand.rotation.y =
         BASE_YAW +
-        current.pointerX * 0.16 +
+        current.yaw +
+        current.pointerX * 0.14 +
         current.scroll * 0.44 +
-        settle * 0.3;
-      stand.rotation.x = -current.pointerY * 0.05 + settle * 0.14;
-      stand.position.y = settle * 0.18;
+        settle * 0.35;
+      stand.rotation.x = -current.pointerY * 0.03 + settle * 0.06;
 
       placeCamera();
       renderer.render(scene, camera);
 
       // Once every value has converged the caller stops the frame loop;
-      // the next pointer, scroll or config change starts it again.
+      // the next pointer, scroll, drag or config change starts it again.
       return moving;
     },
 
     dispose({ loseContext = true } = {}) {
-      slabs.forEach((mesh) => mesh.geometry.dispose());
-      materials.forEach((material) => material.dispose());
-      shadowGeometry.dispose();
-      shadowMaterial.dispose();
-      shadowTexture.dispose();
+      disposed = true;
+      const textures = new Set<Texture>();
+      ownedMaterials.forEach((material) => {
+        Object.values(material).forEach((value) => {
+          if ((value as Texture | null)?.isTexture) {
+            textures.add(value as Texture);
+          }
+        });
+        material.dispose();
+      });
+      textures.forEach((texture) => texture.dispose());
+      ownedMeshes.forEach((mesh) => mesh.geometry.dispose());
+      floorGeometry.dispose();
+      floorMaterial.dispose();
+      contactGeometry.dispose();
+      contactMaterial.dispose();
+      contactTexture.dispose();
+      key.shadow.dispose();
       envTarget.dispose();
       renderer.dispose();
       if (loseContext) renderer.forceContextLoss();
@@ -404,43 +505,51 @@ function buildScene(
   };
 }
 
-/**
- * A blurred rounded rectangle. Drawn via shadowBlur (an off-canvas shape
- * casting its shadow into view) and a hand-built path: ctx.filter and
- * ctx.roundRect are missing in Safari 15 / Firefox < 112, which do have
- * WebGL 2.
- */
-function createShadowTexture(): CanvasTexture {
-  const canvas = document.createElement('canvas');
-  canvas.width = 256;
-  canvas.height = 192;
-  const ctx = canvas.getContext('2d');
-  if (ctx) {
-    const offset = 1000;
-    ctx.shadowColor = 'rgba(0, 0, 0, 1)';
-    ctx.shadowBlur = 26;
-    ctx.shadowOffsetX = offset;
-    ctx.fillStyle = '#000';
-    // 160×108 px on a 256×192 texture ≈ the 2.5×1.7 base on a 4×3 plane
-    roundedRectPath(ctx, 48 - offset, 42, 160, 108, 14);
-    ctx.fill();
-  }
-  return new CanvasTexture(canvas);
+function copyFabric(from: Fabric, to: Fabric): void {
+  to.color.copy(from.color);
+  to.sheenColor.copy(from.sheenColor);
+  to.specularColor.copy(from.specularColor);
+  to.roughness = from.roughness;
+  to.sheenRoughness = from.sheenRoughness;
+  to.specularIntensity = from.specularIntensity;
 }
 
-function roundedRectPath(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  r: number,
-): void {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.arcTo(x + w, y, x + w, y + h, r);
-  ctx.arcTo(x + w, y + h, x, y + h, r);
-  ctx.arcTo(x, y + h, x, y, r);
-  ctx.arcTo(x, y, x + w, y, r);
-  ctx.closePath();
+/** World-space bounds of all meshes, from their geometry boxes. */
+function boundsOf(object: Object3D): { min: Vector3; max: Vector3 } {
+  const min = new Vector3(Infinity, Infinity, Infinity);
+  const max = new Vector3(-Infinity, -Infinity, -Infinity);
+  const point = new Vector3();
+  object.traverse((child) => {
+    const mesh = child as Mesh;
+    if (!mesh.isMesh) return;
+    mesh.geometry.computeBoundingBox();
+    const box = mesh.geometry.boundingBox!;
+    for (const x of [box.min.x, box.max.x]) {
+      for (const y of [box.min.y, box.max.y]) {
+        for (const z of [box.min.z, box.max.z]) {
+          point.set(x, y, z).applyMatrix4(mesh.matrixWorld);
+          min.min(point);
+          max.max(point);
+        }
+      }
+    }
+  });
+  return { min, max };
+}
+
+/** A soft elliptical contact shadow (radial gradient, any canvas engine). */
+function createContactTexture(): CanvasTexture {
+  const canvas = document.createElement('canvas');
+  canvas.width = 256;
+  canvas.height = 256;
+  const ctx = canvas.getContext('2d');
+  if (ctx) {
+    const gradient = ctx.createRadialGradient(128, 128, 0, 128, 128, 128);
+    gradient.addColorStop(0, 'rgba(0, 0, 0, 0.55)');
+    gradient.addColorStop(0.45, 'rgba(0, 0, 0, 0.32)');
+    gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 256, 256);
+  }
+  return new CanvasTexture(canvas);
 }

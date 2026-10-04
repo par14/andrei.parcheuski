@@ -8,9 +8,21 @@ canvas {
   display: block;
   width: 100%;
   height: 100%;
-  /* Fades in under the studio lights coming up (see runtime intro). */
-  animation: scene-in 700ms var(--ease-out) both;
+  opacity: 0;
+  cursor: grab;
+  /* Horizontal drags turn the model; vertical swipes scroll the page. */
+  touch-action: pan-y;
   -webkit-tap-highlight-color: transparent;
+}
+
+canvas[data-dragging] {
+  cursor: grabbing;
+}
+
+/* Fades in with the studio lights once the model has loaded. */
+:host([data-state="on"]) canvas {
+  opacity: 1;
+  animation: scene-in 700ms var(--ease-out);
 }
 
 :host([data-state="off"]) {
