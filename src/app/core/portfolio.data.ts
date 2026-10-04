@@ -50,7 +50,7 @@ export const CAREER_ENTRIES: CareerEntryInfo[] = [
     achievements: [
       'Architect and build 3D product configurators with Angular and Three.js — approximately 30 enterprise projects on a shared 80,000-line codebase.',
       'Integrated real-time Unreal Engine pixel-streaming into the Angular front end for high-fidelity 3D rendering.',
-      'Authored and published 8 internal npm packages under @3dsource — a shared Angular UI component library, data loaders, and configurator APIs.',
+      'Authored and published 8 public npm packages under @3dsource — a shared Angular UI component library, data loaders, and configurator APIs.',
       'Built an external integration API enabling embedding and two-way interaction via iframe.',
       'Reached 95% test coverage on core modules — Playwright E2E with GraphQL stubbing and code coverage, plus Vitest unit tests.',
       'Led a full front-end performance optimization of the platform.',
@@ -232,7 +232,7 @@ export const LINKS: LinkInfo[] = [
   },
   {
     text: '@3dsource npm packages',
-    link: 'https://www.npmjs.com/search?q=%403dsource',
+    link: 'https://www.npmjs.com/org/3dsource',
     description:
       '8 published packages powering the 3D Source platform — a shared Angular UI component library, data loaders, and configurator APIs. Public proof of work on npm.',
   },
