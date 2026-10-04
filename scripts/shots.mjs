@@ -59,6 +59,13 @@ try {
       page.on("pageerror", (e) => console.error(`[${vp}/${theme}]`, e.message));
       await page.goto(URL, { waitUntil: "networkidle" });
       await page.evaluate(() => document.fonts.ready);
+      // The WebGL scene loads on idle; wait until it is running or gave up.
+      await page
+        .waitForSelector(
+          'ngp-hero-scene[data-state="on"], ngp-hero-scene[data-state="off"]',
+          { timeout: 10000 },
+        )
+        .catch(() => console.warn(`[${vp}/${theme}] hero scene not ready`));
       await page.waitForTimeout(1500);
 
       const base = `${OUT}/${theme}-${vp}`;

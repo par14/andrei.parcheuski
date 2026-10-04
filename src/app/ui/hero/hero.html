@@ -1,0 +1,74 @@
+<div class="hero container">
+  <div class="copy">
+    <p class="meta">
+      <span>{{ info.location }}</span>
+      <span>{{ startYear }}–{{ currentYear() }}</span>
+    </p>
+    <h1 class="name">
+      <span>{{ info.firstName }}</span>
+      <span>{{ info.lastName }}</span>
+    </h1>
+    <p class="role">{{ info.role }}</p>
+    <p class="tagline">{{ info.tagline }}</p>
+    <div class="actions">
+      <a
+        class="btn btn-primary"
+        href="/cv.pdf"
+        download
+        aria-label="Download CV (PDF)"
+        >Download CV</a
+      >
+      <a class="btn btn-ghost" href="#contact">Contact me</a>
+    </div>
+  </div>
+
+  <div class="studio">
+    <div class="scene">
+      @defer (on idle) {
+        <ngp-hero-scene
+          [theme]="theme()"
+          [finish]="finish()"
+          [exploded]="exploded()"
+          (stateChange)="sceneState.set($event)"
+          (modelClick)="toggleExploded()"
+        />
+      }
+      @if (sceneState() === "off") {
+        <img
+          class="poster"
+          src="stills/stack.webp"
+          alt=""
+          width="1200"
+          height="900"
+          loading="lazy"
+        />
+      }
+    </div>
+
+    <div
+      class="configurator"
+      role="group"
+      aria-label="Configure the 3D model"
+      [class.is-ready]="sceneState() === 'on'"
+    >
+      <div class="swatches">
+        @for (option of finishes; track option.id) {
+          <button
+            type="button"
+            class="swatch"
+            [style.--swatch]="option.swatch"
+            [attr.aria-pressed]="option.id === finish()"
+            [attr.aria-label]="option.label"
+            (click)="finish.set(option.id)"
+          ></button>
+        }
+      </div>
+      <span class="finish-name" aria-live="polite">{{
+        currentFinish().label
+      }}</span>
+      <button type="button" class="explode" (click)="toggleExploded()">
+        {{ exploded() ? "Assemble" : "Explode" }}
+      </button>
+    </div>
+  </div>
+</div>

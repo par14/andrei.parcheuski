@@ -33,13 +33,13 @@ describe('CareerEntry', () => {
       'Senior Front-End Developer',
     );
     expect(el.textContent).toContain('3D Source');
-    expect(el.textContent).toContain('2023 - Present');
+    expect(el.querySelector('.when')?.textContent).toMatch(/2023\s*– Present/);
   });
 
   it('renders a closed timespan when endYear is set', () => {
     const el = create({ ...baseInputs, endYear: 2025 });
 
-    expect(el.textContent).toContain('2023 - 2025');
+    expect(el.querySelector('.when')?.textContent).toMatch(/2023\s*– 2025/);
   });
 
   it('wraps standalone numbers and percentages in <strong>', () => {

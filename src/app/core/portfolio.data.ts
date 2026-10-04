@@ -215,6 +215,7 @@ export const LINKS: LinkInfo[] = [
   {
     text: '3D Product Configurators — 3D Source',
     link: 'https://www.3dsource.com',
+    image: 'stills/stack-feature.webp',
     description:
       'Architected ~30 enterprise 3D configurators on a shared 80k-line Angular + Three.js codebase, with real-time Unreal Engine pixel-streaming and 8 published @3dsource npm packages. Reached 95% test coverage with Playwright and Vitest.',
   },

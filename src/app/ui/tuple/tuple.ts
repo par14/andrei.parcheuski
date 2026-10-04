@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 @Component({
   selector: 'ngp-tuple',
   template: `
-    <div class="tuple-container" [class.clickable]="link()">
+    <div class="tuple-container">
       <div class="content">
         <span class="heading">{{ heading() }}</span>
         @if (link()) {

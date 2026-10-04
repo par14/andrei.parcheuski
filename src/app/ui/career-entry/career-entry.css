@@ -1,84 +1,156 @@
-/*
- * CAREER ENTRY COMPONENT STYLES
- * Clean, modern styling for career/experience entries
- */
-
-/* ===== COMPONENT LAYOUT ===== */
 :host {
-  display: block;
-  position: relative;
+  display: grid;
+  grid-template-columns: 6.5rem minmax(0, 1fr);
+  gap: var(--space-5);
 }
 
-/* ===== TYPOGRAPHY ===== */
-/* Company and location information */
-.heading {
+.when {
+  display: flex;
+  flex-direction: column;
+  font-variant-numeric: tabular-nums;
+  line-height: var(--leading-snug);
+}
+
+.start {
+  font-size: var(--step-1);
+  font-weight: var(--weight-medium);
+}
+
+.end {
+  color: var(--color-text-2);
+  font-size: var(--step--1);
+}
+
+/* Timeline rail: runs through the gap to the next entry. */
+.body {
+  position: relative;
+  padding-left: var(--space-6);
+}
+
+.body::after {
+  content: "";
+  position: absolute;
+  top: 0.75em;
+  bottom: calc(-1 * var(--space-8) - 0.75em);
+  left: 0;
+  width: 1px;
+  background: var(--color-line);
+}
+
+:host(:last-child) .body::after {
+  bottom: 0;
+  background: linear-gradient(var(--color-line), transparent);
+}
+
+.body::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 0.45em;
+  left: -4.5px;
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid var(--color-text-2);
+  border-radius: 50%;
+  background: var(--color-bg);
+}
+
+/* The current role gets a filled marker. */
+:host(:first-child) .body::before {
+  border-color: var(--color-text);
+  background: var(--color-text);
+}
+
+.role {
+  font-size: var(--step-1);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+}
+
+.where {
   display: flex;
   flex-wrap: wrap;
-  column-gap: var(--space-2);
-  row-gap: var(--space-1);
-  align-items: baseline;
-  color: var(--color-gray);
-  font-family: var(--font-family-body);
-  font-weight: var(--font-weight-bold);
-  font-size: var(--font-size-base);
-  margin-top: var(--space-2);
-  margin-bottom: var(--space-2);
-  transition: color var(--transition-fast);
+  gap: 0 var(--space-2);
+  margin-top: var(--space-1);
+  color: var(--color-text-2);
 }
 
-/* Separator dots live in CSS so they wrap cleanly with the text. */
-.heading span:not(:last-child)::after {
+.where span + span::before {
   content: "·";
-  margin-left: var(--space-2);
-  opacity: 0.6;
+  margin-right: var(--space-2);
 }
 
-/* Job role title */
-.role {
-  font-family: var(--font-family-heading);
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
-  margin-top: 0;
-  margin-bottom: var(--space-2);
-  letter-spacing: var(--letter-spacing-tight);
-  transition: color var(--transition-fast);
-}
-
-/* Single-line description (used by education / simple entries) */
 .description {
-  display: block;
-  color: var(--color-text-secondary, var(--color-gray));
+  margin-top: var(--space-3);
+  color: var(--color-text-2);
 }
 
-/* Achievement bullet list */
 .achievements {
-  margin: var(--space-2) 0 0;
-  padding-left: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-width: 68ch;
+  margin-top: var(--space-4);
   list-style: none;
 }
 
 .achievements li {
   position: relative;
-  padding-left: var(--space-4);
-  margin-bottom: var(--space-2);
-  line-height: var(--line-height-relaxed, 1.6);
-  color: var(--color-text-secondary, var(--color-gray));
-  transition: color var(--transition-fast);
-}
-
-.achievements strong {
-  color: var(--color-accent);
-  font-weight: var(--font-weight-bold);
+  padding-left: var(--space-5);
+  color: var(--color-text-2);
 }
 
 .achievements li::before {
   content: "";
   position: absolute;
+  top: 0.8em;
   left: 0;
-  top: 0.6em;
-  width: 6px;
-  height: 6px;
-  border-radius: var(--radius-full);
-  background: var(--color-accent);
-  box-shadow: 0 0 8px var(--color-accent);
+  width: 8px;
+  height: 1px;
+  background: currentColor;
+}
+
+.achievements strong {
+  color: var(--color-text);
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 560px) {
+  :host {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2);
+  }
+
+  .when {
+    flex-direction: row;
+    gap: var(--space-1);
+    padding-left: var(--space-6);
+  }
+
+  .start,
+  .end {
+    font-size: var(--step--1);
+  }
+
+  .end {
+    color: inherit;
+  }
+
+  /* Company and location stack instead of wrapping around a separator. */
+  .where {
+    flex-direction: column;
+  }
+
+  .where span + span::before {
+    content: none;
+  }
+
+  .body::before {
+    top: calc(-1.6em + 2px);
+  }
+
+  .body::after {
+    top: -1.3em;
+  }
 }

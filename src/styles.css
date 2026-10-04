@@ -1,122 +1,47 @@
 /*
- * NG-PORTFOLIO GLOBAL STYLES
- * A comprehensive design system for the portfolio application
+ * GLOBAL STYLES: font, design tokens, base elements, theme transition.
+ * Component styles live next to their components and only consume tokens.
  */
 
-/* ===== SELF-HOSTED FONTS (latin subset, variable weight) ===== */
+/* ===== FONT (self-hosted, latin subset, variable weight) ===== */
 @font-face {
-  font-family: "Inter";
+  font-family: "Instrument Sans";
   font-style: normal;
   font-weight: 400 700;
   font-display: swap;
-  src: url("/fonts/inter-var-latin.woff2") format("woff2");
+  src: url("/fonts/instrument-sans-var-latin.woff2") format("woff2");
   unicode-range:
     U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
     U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
     U+2215, U+FEFF, U+FFFD;
 }
 
-@font-face {
-  font-family: "Space Grotesk";
-  font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url("/fonts/space-grotesk-var-latin.woff2") format("woff2");
-  unicode-range:
-    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
-    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
-    U+2215, U+FEFF, U+FFFD;
-}
-
-/* ===== DESIGN TOKENS ===== */
+/* ===== TOKENS ===== */
 :root {
-  /* ===== TYPOGRAPHY ===== */
-  /* Font families */
-  --font-family-body:
-    "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-family-heading:
-    "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
+  --font-family:
+    "Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
-  /* Font sizes - Desktop */
-  --font-size-xs: 0.75rem;
-  --font-size-sm: 0.875rem;
-  --font-size-base: 1rem;
-  --font-size-md: 1.125rem;
-  --font-size-lg: 1.5rem;
-  --font-size-xl: 2rem;
-  --font-size-2xl: 2.25rem;
-  --font-size-3xl: 3rem;
-  --font-size-4xl: 4rem;
-  --font-size-5xl: 6rem;
-  --font-size-6xl: 8rem;
-  --font-size-7xl: 8.75rem;
+  /* Fluid type scale, 360px → 1440px viewport */
+  --step--1: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
+  --step-0: clamp(1rem, 0.97rem + 0.14vw, 1.0625rem);
+  --step-1: clamp(1.125rem, 1.06rem + 0.3vw, 1.3125rem);
+  --step-2: clamp(1.375rem, 1.22rem + 0.7vw, 1.875rem);
+  --step-3: clamp(1.75rem, 1.5rem + 1.1vw, 2.5rem);
+  --step-4: clamp(2.25rem, 1.8rem + 2vw, 3.5rem);
+  --step-5: clamp(1.75rem, 0.9rem + 4.2vw, 4.5rem);
+  --step-name: clamp(3rem, 1.4rem + 5.6vw, 5.75rem);
 
-  /* Font weights */
-  --font-weight-light: 300;
-  --font-weight-normal: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
 
-  /* Line heights */
-  --line-height-tight: 1;
-  --line-height-snug: 1.2;
-  --line-height-normal: 1.5;
-  --line-height-relaxed: 1.6;
+  --leading-tight: 1.1;
+  --leading-snug: 1.3;
+  --leading-body: 1.6;
+  --tracking-display: -0.025em;
+  --tracking-heading: -0.015em;
 
-  /* Letter spacing */
-  --letter-spacing-tight: -0.5px;
-  --letter-spacing-wide: 0.5px;
-
-  /* ===== COLOR SYSTEM ===== */
-  /* Dark Theme (Default) */
-  --dark-color-background: #040404;
-  --dark-color-background-rgb: 4, 4, 4;
-  --dark-color-text-primary: #f0f4f8;
-  --dark-color-text-secondary: rgba(240, 244, 248, 0.7);
-  --dark-color-accent: #64ffda;
-  --dark-color-accent-muted: rgba(100, 255, 218, 0.7);
-  --dark-color-accent-bg: rgba(100, 255, 218, 0.05);
-  --dark-color-border: rgba(240, 244, 248, 0.2);
-  --dark-color-control-border: #73818a;
-  --dark-color-secondary: #7fdbff;
-  --dark-color-gray: #a0aec0;
-  --dark-color-card-bg: rgba(30, 30, 30, 0.4);
-  --dark-color-shadow: rgba(0, 0, 0, 0.3);
-
-  /* Light Theme */
-  --light-color-background: #fafafa;
-  --light-color-background-rgb: 250, 250, 250;
-  --light-color-text-primary: #121212;
-  --light-color-text-secondary: rgba(18, 18, 18, 0.7);
-  --light-color-accent: rgb(70, 110, 180);
-  --light-color-accent-muted: rgba(70, 110, 180, 0.7);
-  --light-color-accent-bg: rgba(70, 110, 180, 0.05);
-  --light-color-border: rgba(18, 18, 18, 0.2);
-  --light-color-control-border: #466eb4;
-  /* 5.2:1 on the light background — #90b0e0 was 2.1:1 and illegible */
-  --light-color-secondary: #4a6b9d;
-  --light-color-gray: #6e6e6e;
-  --light-color-card-bg: rgba(255, 255, 255, 0.7);
-  --light-color-shadow: rgba(0, 0, 0, 0.1);
-
-  /* Active Theme Colors (defaults to dark theme) */
-  --color-background: var(--dark-color-background);
-  --color-background-rgb: var(--dark-color-background-rgb);
-  --color-text-primary: var(--dark-color-text-primary);
-  --color-text-secondary: var(--dark-color-text-secondary);
-  --color-accent: var(--dark-color-accent);
-  --color-accent-muted: var(--dark-color-accent-muted);
-  --color-accent-bg: var(--dark-color-accent-bg);
-  --color-border: var(--dark-color-border);
-  --color-control-border: var(--dark-color-control-border);
-  --color-secondary: var(--dark-color-secondary);
-  --color-gray: var(--dark-color-gray);
-  --color-card-bg: var(--dark-color-card-bg);
-  --color-shadow: var(--dark-color-shadow);
-
-  /* ===== SPACING SYSTEM ===== */
+  /* Spacing */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -126,105 +51,56 @@
   --space-8: 48px;
   --space-10: 64px;
   --space-12: 96px;
-  --space-16: 148px;
+  --section-gap: clamp(64px, 3rem + 4vw, 128px);
+  --gutter: clamp(16px, 4vw, 48px);
+  --content-width: 1240px;
 
-  /* ===== BORDERS & SHAPES ===== */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
+  /* Shape */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
   --radius-full: 9999px;
 
-  /* ===== SHADOWS ===== */
-  --shadow-md: 0 4px 6px var(--color-shadow);
+  /* Motion */
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --duration-fast: 160ms;
+  --duration-normal: 280ms;
 
-  /* ===== ANIMATIONS ===== */
-  --transition-fast: 0.2s ease;
-  --transition-normal: 0.3s ease;
-  --easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
-  --easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
+  /* ===== Colour: dark (default) ===== */
+  color-scheme: dark;
+  --color-bg: #141a21;
+  --color-surface: #1b222b;
+  --color-text: #eceef1;
+  --color-text-2: #9aa4b2;
+  --color-accent: #6b8cff;
+  --color-accent-fill: #4f6df0;
+  --color-accent-ink: #0e1320;
+  --color-status: #3dbe7a;
+  --color-line: rgb(236 238 241 / 0.12);
+  --color-line-strong: rgb(236 238 241 / 0.24);
+  --color-stage-glow: #24303e;
+  --color-chip: color-mix(in oklab, var(--color-accent) 10%, transparent);
+  --shadow-1: 0 1px 2px rgb(0 0 0 / 0.3), 0 4px 16px rgb(0 0 0 / 0.2);
 }
 
-/* ===== RESPONSIVE ADJUSTMENTS ===== */
-/* Tablet (992px and below) */
-@media (max-width: 992px) {
-  :root {
-    /* Font size adjustments */
-    --font-size-lg: 1.25rem;
-    --font-size-xl: 1.75rem;
-    --font-size-2xl: 2rem;
-    --font-size-3xl: 2.5rem;
-    --font-size-4xl: 3.25rem;
-    --font-size-5xl: 4.5rem;
-    --font-size-6xl: 6rem;
-    --font-size-7xl: 6.875rem;
-
-    /* Spacing adjustments */
-    --space-8: 40px;
-    --space-10: 52px;
-    --space-12: 72px;
-    --space-16: 110px;
-  }
-}
-
-/* Mobile (576px and below) */
-@media (max-width: 576px) {
-  :root {
-    /* Font size adjustments */
-    --font-size-lg: 1.125rem;
-    --font-size-xl: 1.5rem;
-    --font-size-2xl: 1.75rem;
-    --font-size-3xl: 2rem;
-    --font-size-4xl: 2.5rem;
-    --font-size-5xl: 3rem;
-    --font-size-6xl: 3.5rem;
-    --font-size-7xl: 4rem;
-
-    /* Spacing adjustments */
-    --space-6: 24px;
-    --space-8: 32px;
-    --space-10: 40px;
-    --space-12: 48px;
-    --space-16: 64px;
-  }
-}
-
-/* ===== THEME SWITCHING ===== */
-/* Light theme */
 html[data-theme="light"] {
-  --color-background: var(--light-color-background);
-  --color-background-rgb: var(--light-color-background-rgb);
-  --color-text-primary: var(--light-color-text-primary);
-  --color-text-secondary: var(--light-color-text-secondary);
-  --color-accent: var(--light-color-accent);
-  --color-accent-muted: var(--light-color-accent-muted);
-  --color-accent-bg: var(--light-color-accent-bg);
-  --color-border: var(--light-color-border);
-  --color-control-border: var(--light-color-control-border);
-  --color-secondary: var(--light-color-secondary);
-  --color-gray: var(--light-color-gray);
-  --color-card-bg: var(--light-color-card-bg);
-  --color-shadow: var(--light-color-shadow);
+  color-scheme: light;
+  --color-bg: #eeefea;
+  --color-surface: #ffffff;
+  --color-text: #15181c;
+  --color-text-2: #56606b;
+  --color-accent: #2743c7;
+  --color-accent-fill: #2743c7;
+  --color-accent-ink: #ffffff;
+  --color-status: #1f9d5c;
+  --color-line: rgb(21 24 28 / 0.12);
+  --color-line-strong: rgb(21 24 28 / 0.24);
+  --color-stage-glow: #fbfbf8;
+  --color-chip: color-mix(in oklab, var(--color-accent) 7%, transparent);
+  --shadow-1: 0 1px 2px rgb(21 24 28 / 0.06), 0 6px 20px rgb(21 24 28 / 0.06);
 }
 
-/* Dark theme */
-html[data-theme="dark"] {
-  --color-background: var(--dark-color-background);
-  --color-background-rgb: var(--dark-color-background-rgb);
-  --color-text-primary: var(--dark-color-text-primary);
-  --color-text-secondary: var(--dark-color-text-secondary);
-  --color-accent: var(--dark-color-accent);
-  --color-accent-muted: var(--dark-color-accent-muted);
-  --color-accent-bg: var(--dark-color-accent-bg);
-  --color-border: var(--dark-color-border);
-  --color-control-border: var(--dark-color-control-border);
-  --color-secondary: var(--dark-color-secondary);
-  --color-gray: var(--dark-color-gray);
-  --color-card-bg: var(--dark-color-card-bg);
-  --color-shadow: var(--dark-color-shadow);
-}
-
-/* ===== BASE STYLES ===== */
-/* Reset and base styles */
+/* ===== BASE ===== */
 *,
 *::before,
 *::after {
@@ -233,115 +109,77 @@ html[data-theme="dark"] {
 
 html {
   scroll-behavior: smooth;
-}
-
-/* Respect users who prefer reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    /* `animation: none` rather than a 0ms duration: scroll()/view() timeline
-       animations ignore animation-duration, so a duration override would
-       leave the scroll-driven effects running. Base styles keep all content
-       visible without the entrance/scroll motion. */
-    animation: none !important;
-    transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* Gradient-clipped text (name, section titles, stats, footer) relies on a
-   transparent text fill; forced-colors mode strips the background gradient,
-   which would leave invisible text without this guard. */
-@media (forced-colors: active) {
-  * {
-    -webkit-text-fill-color: currentColor !important;
-    background-image: none !important;
-    text-shadow: none !important;
-  }
+  scroll-padding-top: var(--space-6);
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
   margin: 0;
-  background: var(--color-background);
-  font-family: var(--font-family-body);
-  font-size: var(--font-size-base);
-  line-height: var(--line-height-relaxed);
-  color: var(--color-text-primary);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-family);
+  font-size: var(--step-0);
+  line-height: var(--leading-body);
+  font-weight: var(--weight-regular);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition:
-    background-color var(--transition-normal),
-    color var(--transition-normal);
-  overflow-x: hidden;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
 }
 
-/* ===== TYPOGRAPHY ===== */
 h1,
 h2,
 h3,
-h4,
-h5,
-h6 {
-  font-family: var(--font-family-heading);
-  margin-top: 0;
-  margin-bottom: var(--space-4);
-  font-weight: var(--font-weight-semibold);
-  line-height: var(--line-height-snug);
-  letter-spacing: var(--letter-spacing-tight);
-}
-
-h1 {
-  font-size: var(--font-size-4xl);
-}
-
-h2 {
-  font-size: var(--font-size-3xl);
-}
-
-h3 {
-  font-size: var(--font-size-2xl);
-}
-
 h4 {
-  font-size: var(--font-size-xl);
-}
-
-h5 {
-  font-size: var(--font-size-lg);
-}
-
-h6 {
-  font-size: var(--font-size-md);
+  margin: 0;
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-heading);
+  text-wrap: balance;
 }
 
 p {
-  margin-top: 0;
-  margin-bottom: var(--space-4);
+  margin: 0;
+  text-wrap: pretty;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+}
+
+img {
+  display: block;
+  max-width: 100%;
 }
 
 a {
   color: var(--color-accent);
   text-decoration: none;
-  transition: color var(--transition-fast);
 }
 
-a:hover {
-  color: var(--color-secondary);
+button {
+  font: inherit;
+  color: inherit;
 }
 
-/* ===== LAYOUT UTILITIES ===== */
+::selection {
+  background: color-mix(in oklab, var(--color-accent) 35%, transparent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
 .container {
-  max-width: 1440px;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 0 var(--space-5);
   width: 100%;
-  box-sizing: border-box;
+  max-width: calc(var(--content-width) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
 }
 
-.visually-hidden,
-.sr-only {
+.visually-hidden {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -353,10 +191,86 @@ a:hover {
   border: 0;
 }
 
-/* ===== RESPONSIVE UTILITIES ===== */
-@media (max-width: 576px) {
-  .container {
-    padding: 0 var(--space-4);
+/* ===== SHARED BUTTONS (hero, footer) ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 var(--space-5);
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  font-weight: var(--weight-semibold);
+  font-size: var(--step-0);
+  line-height: 1;
+  white-space: nowrap;
+  transition:
+    background-color var(--duration-fast) ease,
+    border-color var(--duration-fast) ease,
+    color var(--duration-fast) ease;
+}
+
+.btn-primary {
+  background: var(--color-accent-fill);
+  color: var(--color-accent-ink);
+}
+
+.btn-primary:hover {
+  background: color-mix(
+    in oklab,
+    var(--color-accent-fill) 88%,
+    var(--color-text)
+  );
+}
+
+.btn-ghost {
+  border-color: var(--color-line-strong);
+  color: var(--color-text);
+}
+
+.btn-ghost:hover {
+  border-color: var(--color-text);
+}
+
+/* ===== THEME SWITCH: circular reveal from the toggle button =====
+   ThemeSwitcherComponent sets --vt-x/--vt-y/--vt-r before the transition. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-new(root) {
+  animation: theme-reveal 520ms var(--ease-out);
+}
+
+@keyframes theme-reveal {
+  from {
+    clip-path: circle(0 at var(--vt-x, 50%) var(--vt-y, 0%));
+  }
+  to {
+    clip-path: circle(var(--vt-r, 150vmax) at var(--vt-x, 50%) var(--vt-y, 0%));
+  }
+}
+
+/* ===== ACCESSIBILITY MODES ===== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    /* `animation: none` rather than a 0ms duration: scroll()/view() timeline
+       animations ignore animation-duration. Base styles keep all content
+       visible without the entrance/scroll motion. */
+    animation: none !important;
+    transition-duration: 0.001ms !important;
+    transition-delay: 0s !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .btn {
+    border-color: ButtonText;
   }
 }
 
@@ -366,42 +280,23 @@ a:hover {
     animation: none !important;
     transition: none !important;
     box-shadow: none !important;
-    text-shadow: none !important;
-    /* Gradient-clipped text prints as blank without an opaque fill */
-    -webkit-text-fill-color: currentColor !important;
-    background-image: none !important;
   }
 
   body {
     background: #fff;
     color: #000;
-    overflow: visible;
   }
 
   .scroll-progress,
-  .hero,
-  .hero-gradient,
   .skip-link,
-  ngp-theme-switcher {
+  ngp-hero-scene,
+  ngp-theme-switcher,
+  .configurator {
     display: none !important;
-  }
-
-  .hero-section,
-  main {
-    display: block !important;
-    height: auto !important;
-    min-height: 0 !important;
   }
 
   a[href^="http"]::after {
     content: " (" attr(href) ")";
     font-size: 0.75rem;
-    font-weight: normal;
   }
-}
-
-/* ===== FOCUS STYLES ===== */
-:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
 }

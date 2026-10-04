@@ -1,0 +1,24 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* Fades in under the studio lights coming up (see runtime intro). */
+  animation: scene-in 700ms var(--ease-out) both;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:host([data-state="off"]) {
+  display: none;
+}
+
+@keyframes scene-in {
+  from {
+    opacity: 0;
+  }
+}

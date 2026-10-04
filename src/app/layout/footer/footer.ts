@@ -1,20 +1,41 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-import { PORTFOLIO_DATA } from '../../core/portfolio.data';
+import { CONTACT_INFO, FOOTER_INFO } from '../../core/portfolio.data';
 
 @Component({
   selector: 'ngp-footer',
   template: `
-    <span class="footer-main-message">
-      {{ PORTFOLIO_DATA.footerInfo.mainMessage }}
-    </span>
-    <span class="footer-sub-message">
-      {{ PORTFOLIO_DATA.footerInfo.subMessage }}
-    </span>
+    <footer class="footer">
+      <p class="lead">{{ footer.mainMessage }}</p>
+      <a class="email" [href]="'mailto:' + email">{{ email }}</a>
+      <div class="meta">
+        <p class="status">
+          <span class="dot" aria-hidden="true"></span>
+          {{ footer.subMessage }}
+        </p>
+        <ul class="links">
+          @if (linkedIn) {
+            <li>
+              <a [href]="linkedIn" target="_blank" rel="noopener noreferrer"
+                >LinkedIn<span class="visually-hidden">
+                  (opens in a new tab)</span
+                ></a
+              >
+            </li>
+          }
+          <li><a href="/cv.pdf" download>Download CV</a></li>
+        </ul>
+      </div>
+    </footer>
   `,
   styleUrl: './footer.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Footer {
-  PORTFOLIO_DATA = PORTFOLIO_DATA;
+  protected readonly footer = FOOTER_INFO;
+  protected readonly email =
+    CONTACT_INFO.find((contact) => contact.heading === 'Email')?.body ?? '';
+  protected readonly linkedIn = CONTACT_INFO.find(
+    (contact) => contact.heading === 'LinkedIn',
+  )?.link;
 }

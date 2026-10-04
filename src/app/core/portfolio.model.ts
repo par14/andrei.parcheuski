@@ -52,6 +52,8 @@ export interface LinkInfo {
   text: string;
   link: string;
   description: string;
+  /** Still image; the first project with one is shown as a featured card. */
+  image?: string;
 }
 
 export interface ContactInfo {

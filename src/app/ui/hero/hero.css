@@ -1,0 +1,225 @@
+:host {
+  display: block;
+}
+
+.hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: var(--space-8);
+  align-items: center;
+  min-height: clamp(560px, calc(100svh - 88px), 860px);
+  padding-block: var(--space-8) var(--space-10);
+}
+
+/* ===== COPY ===== */
+.copy {
+  position: relative;
+  z-index: 1;
+}
+
+/* The page's one orchestrated entrance: copy rises in sequence, then the
+   studio lights come up behind the model (hero-scene). */
+.copy > * {
+  animation: rise 640ms var(--ease-out) both;
+}
+.copy > :nth-child(2) {
+  animation-delay: 60ms;
+}
+.copy > :nth-child(3) {
+  animation-delay: 120ms;
+}
+.copy > :nth-child(4) {
+  animation-delay: 180ms;
+}
+.copy > :nth-child(5) {
+  animation-delay: 240ms;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-3);
+  margin-bottom: var(--space-5);
+  color: var(--color-text-2);
+  font-size: var(--step--1);
+  font-variant-numeric: tabular-nums;
+}
+
+.meta span + span::before {
+  content: "·";
+  margin-right: var(--space-3);
+}
+
+.name {
+  font-size: var(--step-name);
+  font-weight: var(--weight-semibold);
+  line-height: 0.94;
+  letter-spacing: var(--tracking-display);
+}
+
+.name span {
+  display: block;
+}
+
+.role {
+  margin-top: var(--space-5);
+  font-size: var(--step-1);
+  font-weight: var(--weight-medium);
+}
+
+.tagline {
+  margin-top: var(--space-2);
+  max-width: 36ch;
+  color: var(--color-text-2);
+  font-size: var(--step-1);
+  line-height: var(--leading-snug);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-8);
+}
+
+/* ===== STUDIO (3D model + configurator) ===== */
+.studio {
+  position: relative;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  min-height: 420px;
+}
+
+.scene {
+  position: absolute;
+  inset: 4% calc(-1 * var(--gutter)) 52px -12%;
+}
+
+.poster {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.configurator {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-1) var(--space-1) var(--space-1) var(--space-2);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-full);
+  background: color-mix(in oklab, var(--color-surface) 72%, transparent);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  font-size: var(--step--1);
+  opacity: 0;
+  visibility: hidden;
+}
+
+.configurator.is-ready {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 500ms var(--ease-out) 700ms;
+}
+
+.swatches {
+  display: flex;
+}
+
+.swatch {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  cursor: pointer;
+}
+
+.swatch::before,
+.swatch::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+}
+
+.swatch::before {
+  inset: 8px;
+  background: var(--swatch);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.18);
+}
+
+.swatch::after {
+  inset: 3px;
+  border: 1.5px solid transparent;
+  transition: border-color var(--duration-fast) ease;
+}
+
+.swatch:hover::after {
+  border-color: var(--color-line-strong);
+}
+
+.swatch[aria-pressed="true"]::after {
+  border-color: var(--color-text);
+}
+
+.finish-name {
+  min-width: 15ch;
+  color: var(--color-text-2);
+}
+
+.explode {
+  min-width: 92px;
+  height: 36px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-full);
+  background: none;
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+  transition: border-color var(--duration-fast) ease;
+}
+
+.explode:hover {
+  border-color: var(--color-text);
+}
+
+/* ===== STACKED (tablet & mobile): model first, copy below ===== */
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-5);
+    min-height: 0;
+    padding-block: 0 var(--space-10);
+  }
+
+  .studio {
+    order: -1;
+    height: clamp(280px, 40svh, 480px);
+    min-height: 0;
+  }
+
+  .scene {
+    inset: 0 calc(-1 * var(--gutter)) 52px;
+  }
+}
+
+@media (max-width: 480px) {
+  .actions .btn {
+    flex: 1 1 0;
+  }
+}

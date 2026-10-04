@@ -1,4 +1,8 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  DeferBlockBehavior,
+  TestBed,
+} from '@angular/core/testing';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { PORTFOLIO_DATA } from '../core/portfolio.data';
@@ -16,6 +20,10 @@ describe('Layout (smoke)', () => {
       'matchMedia',
       vi.fn().mockImplementation(() => ({ matches: false })),
     );
+    // Never load the WebGL hero scene (and `three`) in jsdom.
+    TestBed.configureTestingModule({
+      deferBlockBehavior: DeferBlockBehavior.Manual,
+    });
     fixture = TestBed.createComponent(Layout);
     fixture.detectChanges();
     await fixture.whenStable();
@@ -36,7 +44,7 @@ describe('Layout (smoke)', () => {
   });
 
   it('renders every content section', () => {
-    const titles = Array.from(el.querySelectorAll('ngp-section h3')).map((h) =>
+    const titles = Array.from(el.querySelectorAll('ngp-section h2')).map((h) =>
       h.textContent?.trim(),
     );
     expect(titles).toEqual([
@@ -69,11 +77,22 @@ describe('Layout (smoke)', () => {
     expect(cv?.hasAttribute('download')).toBe(true);
   });
 
-  it('computes years of experience from the start year', () => {
-    const years =
-      new Date().getFullYear() - PORTFOLIO_DATA.experienceOverview.startYear;
-    expect(el.querySelector('.experience-section span')?.textContent).toContain(
-      `${years} years of experience`,
+  it('shows the career span up to the current year', () => {
+    const span = `${PORTFOLIO_DATA.experienceOverview.startYear}–${new Date().getFullYear()}`;
+    expect(el.querySelector('ngp-hero .meta')?.textContent).toContain(span);
+  });
+
+  it('renders the 3D configurator controls without loading the scene', () => {
+    const swatches = el.querySelectorAll('.configurator .swatch');
+    expect(swatches.length).toBe(3);
+    expect(swatches[0].getAttribute('aria-pressed')).toBe('true');
+    expect(el.querySelector('ngp-hero-scene')).toBeNull();
+  });
+
+  it('features the first project with an image', () => {
+    expect(el.querySelectorAll('ngp-link .featured').length).toBe(1);
+    expect(el.querySelectorAll('ngp-link').length).toBe(
+      PORTFOLIO_DATA.links.length,
     );
   });
 });

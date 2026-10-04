@@ -1,5 +1,6 @@
 import {
   afterNextRender,
+  ApplicationRef,
   DOCUMENT,
   inject,
   Injectable,
@@ -17,6 +18,7 @@ export class ThemeService {
   #document = inject(DOCUMENT);
   #THEME_KEY = 'portfolio-theme';
   #platformId = inject(PLATFORM_ID);
+  #appRef = inject(ApplicationRef);
   theme = signal<Theme>('dark');
   currentTheme = this.theme.asReadonly();
 
@@ -61,16 +63,21 @@ export class ThemeService {
     const next: Theme = this.theme() === 'dark' ? 'light' : 'dark';
     const apply = () => this.setTheme(next);
 
-    // Progressive enhancement: cross-fade the whole page between themes.
+    // Progressive enhancement: animate the whole page between themes.
     const doc = this.#document as Document & {
-      startViewTransition?: (callback: () => void) => void;
+      startViewTransition?: (callback: () => void | Promise<void>) => void;
     };
     const reducedMotion =
       isPlatformBrowser(this.#platformId) &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (doc.startViewTransition && !reducedMotion) {
-      doc.startViewTransition(apply);
+      // Zoneless: wait for Angular to re-render (e.g. the toggle icon) so
+      // the "new" snapshot shows the finished state.
+      doc.startViewTransition(async () => {
+        apply();
+        await this.#appRef.whenStable();
+      });
     } else {
       apply();
     }

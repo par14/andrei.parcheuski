@@ -1,140 +1,99 @@
 <a class="skip-link" href="#main-content">Skip to content</a>
 <div class="scroll-progress" aria-hidden="true"></div>
-<div class="container">
-  <ngp-header />
-  <div class="hero-section">
-    <section class="hero">
-      <div class="hero-image-wrapper">
-        <div class="hero-gradient" aria-hidden="true"></div>
-      </div>
-    </section>
 
-    @let experienceOverview = PORTFOLIO_DATA.experienceOverview;
-
-    <div class="right-column">
-      <section class="experience-section" aria-label="Professional experience">
-        <strong aria-label="Career timespan">
-          {{ experienceOverview.startYear }} - {{ currentYear() }}
-        </strong>
-        <span>{{ yearsOfExperience() }} years of experience</span>
-      </section>
-
-      <blockquote>
-        <span aria-hidden="true">"</span>
-        <span>{{ PORTFOLIO_DATA.quote.text }}</span>
-      </blockquote>
-    </div>
-
-    @let personalInfo = PORTFOLIO_DATA.personalInfo;
-    <div class="left-column">
-      <section class="name-and-role" aria-labelledby="name-heading">
-        <img
-          class="hero-portrait"
-          src="portrait.jpg"
-          fetchpriority="high"
-          alt="Andrei Parcheuski"
-          width="168"
-          height="168"
-        />
-        <h1 id="name-heading" class="name">
-          {{ personalInfo.firstName }}<br />{{ personalInfo.lastName }}
-        </h1>
-        <h2 class="role">{{ personalInfo.role }}</h2>
-        <p class="tagline">{{ personalInfo.tagline }}</p>
-        <p class="availability">{{ personalInfo.availability }}</p>
-        <div class="hero-actions">
-          <a
-            class="btn-primary"
-            href="/cv.pdf"
-            download
-            aria-label="Download CV in PDF format"
-          >
-            Download CV
-          </a>
-          <a class="btn-ghost" href="#contact">Contact me</a>
-        </div>
-      </section>
-    </div>
+<div class="stage">
+  <div class="container">
+    <ngp-header />
   </div>
-  <main id="main-content" role="main">
-    <ul class="highlights" aria-label="Career highlights">
-      @for (highlight of PORTFOLIO_DATA.highlights; track $index) {
-        <li class="highlight">
-          <span class="highlight-value" ngpCountUp>{{ highlight.value }}</span>
-          <span class="highlight-label">{{ highlight.label }}</span>
-        </li>
-      }
-    </ul>
+  <ngp-hero />
+</div>
 
-    <ngp-section title="About">
-      <p>{{ PORTFOLIO_DATA.aboutInfo.description }}</p>
-    </ngp-section>
+<main id="main-content" class="container">
+  <ngp-highlights />
 
-    <ngp-section title="Experience">
-      @for (entry of PORTFOLIO_DATA.careerEntries; track $index) {
-        <ngp-career-entry
-          [company]="entry.company"
-          [location]="entry.location"
-          [startYear]="entry.startYear"
-          [endYear]="entry.endYear"
-          [role]="entry.role"
-          [description]="entry.description"
-          [achievements]="entry.achievements ?? []"
-        />
-      }
-    </ngp-section>
+  <ngp-section title="About">
+    <img
+      sectionAside
+      class="portrait"
+      src="portrait-4x5.jpg"
+      alt="Andrei Parcheuski"
+      width="376"
+      height="470"
+      loading="lazy"
+      decoding="async"
+    />
+    <p class="about">{{ data.aboutInfo.description }}</p>
+  </ngp-section>
 
-    <ngp-section title="Education">
-      @for (edu of PORTFOLIO_DATA.education; track $index) {
-        <ngp-career-entry
-          [company]="edu.institution"
-          [location]="edu.location"
-          [startYear]="edu.startYear"
-          [endYear]="edu.endYear"
-          [role]="edu.degree"
-        />
-      }
-    </ngp-section>
+  <ngp-section title="Experience">
+    @for (entry of data.careerEntries; track $index) {
+      <ngp-career-entry
+        [company]="entry.company"
+        [location]="entry.location"
+        [startYear]="entry.startYear"
+        [endYear]="entry.endYear"
+        [role]="entry.role"
+        [description]="entry.description"
+        [achievements]="entry.achievements ?? []"
+      />
+    }
+  </ngp-section>
 
-    <ngp-section title="Skills">
-      <div class="skill-groups">
-        @for (group of PORTFOLIO_DATA.skillGroups; track $index) {
-          <div class="skill-group">
-            <h4 class="skill-group-name">{{ group.name }}</h4>
-            <ngp-skills>
-              @for (skill of group.skills; track $index) {
-                <ngp-skill [skill]="skill" />
-              }
-            </ngp-skills>
-          </div>
-        }
+  <ngp-section title="Education">
+    @for (edu of data.education; track $index) {
+      <ngp-career-entry
+        [company]="edu.institution"
+        [location]="edu.location"
+        [startYear]="edu.startYear"
+        [endYear]="edu.endYear"
+        [role]="edu.degree"
+      />
+    }
+  </ngp-section>
+
+  <ngp-section title="Skills">
+    @for (group of data.skillGroups; track group.name) {
+      <div class="skill-group">
+        <h3 class="skill-group-name">{{ group.name }}</h3>
+        <ngp-skills>
+          @for (skill of group.skills; track skill) {
+            <ngp-skill [skill]="skill" />
+          }
+        </ngp-skills>
       </div>
-    </ngp-section>
+    }
+  </ngp-section>
 
-    <ngp-section title="Languages">
-      <ngp-languages>
-        @for (language of PORTFOLIO_DATA.languages; track $index) {
-          <ngp-language [language]="language" />
-        }
-      </ngp-languages>
-    </ngp-section>
-
-    <ngp-section title="Projects">
-      @for (link of PORTFOLIO_DATA.links; track $index) {
-        <ngp-link [link]="link" />
+  <ngp-section title="Languages">
+    <ngp-languages>
+      @for (language of data.languages; track language.name) {
+        <ngp-language [language]="language" />
       }
-    </ngp-section>
+    </ngp-languages>
+  </ngp-section>
 
-    <ngp-section title="Contact">
-      @for (contact of PORTFOLIO_DATA.contactInfo; track $index) {
+  <ngp-section title="Projects">
+    @if (featuredProject; as project) {
+      <ngp-link [link]="project" featured />
+    }
+    <div class="project-list">
+      @for (project of otherProjects; track project.link) {
+        <ngp-link [link]="project" />
+      }
+    </div>
+  </ngp-section>
+
+  <ngp-section title="Contact">
+    <div class="contact-list">
+      @for (contact of data.contactInfo; track contact.heading) {
         <ngp-tuple
           [heading]="contact.heading"
           [body]="contact.body"
           [link]="contact.clickable ? contact.link! : ''"
         />
       }
-    </ngp-section>
+    </div>
+  </ngp-section>
+</main>
 
-    <ngp-footer />
-  </main>
-</div>
+<ngp-footer class="container" />
